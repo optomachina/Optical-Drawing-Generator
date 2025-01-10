@@ -50,15 +50,12 @@ function App() {
 
         <div className="flex-1 grid md:grid-cols-1 gap-2 bg-white rounded-xl shadow-lg p-2 overflow-hidden">
           <div className="flex flex-col">
-            <h2 className="text-lg font-semibold text-gray-800 mb-1">Visualization</h2>
             <div className="bg-gray-50 rounded-lg p-2 h-[35vh]">
               <LensVisualizer params={params} updateParam={updateParam} />
             </div>
           </div>
 
           <div className="flex flex-col">
-            <h2 className="text-lg font-semibold text-gray-800 mb-1">Lens Parameters</h2>
-            
             <div className="grid grid-cols-3 gap-0 border border-gray-300">
               {/* Column Headers */}
               <div className="border-b border-r border-gray-300 p-2 bg-gray-50 font-medium text-center">LEFT SURFACE</div>
