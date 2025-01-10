@@ -5,6 +5,13 @@ export interface LensParameters {
   type1: 'CX' | 'CV' | 'PLANO';
   radius2: number;
   type2: 'CX' | 'CV' | 'PLANO';
+  // Material parameters
+  glass: string;
+  nd: string;
+  vd: string;
+  bubbles: string;  // 0/
+  inclusions: string;  // 1/
+  stress: string;  // 2/
   // Left surface parameters
   leftDiameter: number;
   leftChamfer: number;

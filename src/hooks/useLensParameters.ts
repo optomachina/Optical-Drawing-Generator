@@ -9,6 +9,13 @@ const defaultParams: LensParameters = {
   type1: 'CX',
   radius2: 50.0,
   type2: 'CV',
+  // Material parameters
+  glass: "S-FPL51",
+  nd: "±0.0005",
+  vd: "±0.5",
+  bubbles: "10",
+  inclusions: "4 X 0.1",
+  stress: "3:3",
   // Left surface parameters
   leftDiameter: 41.0,
   leftChamfer: 0.1,

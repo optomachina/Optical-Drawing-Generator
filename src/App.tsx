@@ -163,6 +163,60 @@ function App() {
                 <h3 className="text-sm font-medium text-gray-700 mb-3">Material</h3>
                 <div className="space-y-2">
                   <div className="grid grid-cols-[120px_1fr] items-center gap-2">
+                    <span className="text-gray-700 text-sm">GLASS</span>
+                    <input
+                      type="text"
+                      value={params.glass}
+                      onChange={(e) => updateParam('glass', e.target.value)}
+                      className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                    />
+                  </div>
+                  <div className="grid grid-cols-[120px_1fr] items-center gap-2">
+                    <span className="text-gray-700 text-sm">Nd</span>
+                    <input
+                      type="text"
+                      value={params.nd}
+                      onChange={(e) => updateParam('nd', e.target.value)}
+                      className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                    />
+                  </div>
+                  <div className="grid grid-cols-[120px_1fr] items-center gap-2">
+                    <span className="text-gray-700 text-sm">Vd</span>
+                    <input
+                      type="text"
+                      value={params.vd}
+                      onChange={(e) => updateParam('vd', e.target.value)}
+                      className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                    />
+                  </div>
+                  <div className="grid grid-cols-[120px_1fr] items-center gap-2">
+                    <span className="text-gray-700 text-sm">0/</span>
+                    <input
+                      type="text"
+                      value={params.bubbles}
+                      onChange={(e) => updateParam('bubbles', e.target.value)}
+                      className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                    />
+                  </div>
+                  <div className="grid grid-cols-[120px_1fr] items-center gap-2">
+                    <span className="text-gray-700 text-sm">1/</span>
+                    <input
+                      type="text"
+                      value={params.inclusions}
+                      onChange={(e) => updateParam('inclusions', e.target.value)}
+                      className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                    />
+                  </div>
+                  <div className="grid grid-cols-[120px_1fr] items-center gap-2">
+                    <span className="text-gray-700 text-sm">2/</span>
+                    <input
+                      type="text"
+                      value={params.stress}
+                      onChange={(e) => updateParam('stress', e.target.value)}
+                      className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                    />
+                  </div>
+                  <div className="grid grid-cols-[120px_1fr] items-center gap-2">
                     <span className="text-gray-700 text-sm">∅ Diameter</span>
                     <input
                       type="number"
