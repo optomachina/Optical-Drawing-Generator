@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Ruler } from 'lucide-react';
 import LensVisualizer from './components/LensVisualizer';
 import { useLensParameters } from './hooks/useLensParameters';
@@ -6,6 +6,98 @@ import { formatRadius } from './utils/lensCalculations';
 
 function App() {
   const { params, updateParam } = useLensParameters();
+  const [resizing, setResizing] = useState(false);
+  const [startY, setStartY] = useState(0);
+  const [startX, setStartX] = useState(0);
+  const [startHeight, setStartHeight] = useState(0);
+  const [startWidth, setStartWidth] = useState(0);
+  const [resizeType, setResizeType] = useState<'row' | 'col' | 'corner' | null>(null);
+  const resizingRow = useRef<HTMLTableRowElement | null>(null);
+  const resizingCol = useRef<HTMLTableColElement | null>(null);
+  const resizingColIndex = useRef<number>(-1);
+  const tableRef = useRef<HTMLTableElement>(null);
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!resizing) return;
+      
+      if (resizeType === 'row' && resizingRow.current) {
+        const deltaY = e.clientY - startY;
+        const newHeight = Math.max(24, startHeight + deltaY);
+        resizingRow.current.style.height = `${newHeight}px`;
+      } else if (resizeType === 'col' && resizingCol.current) {
+        const deltaX = e.clientX - startX;
+        const newWidth = Math.max(30, startWidth - deltaX);
+        resizingCol.current.style.width = `${newWidth}px`;
+      } else if (resizeType === 'corner' && tableRef.current) {
+        const deltaX = startX - e.clientX;
+        const deltaY = e.clientY - startY;
+        
+        // Adjust column widths
+        const cols = tableRef.current.getElementsByTagName('col');
+        for (let i = 0; i < cols.length; i++) {
+          const col = cols[i];
+          const baseWidth = i === 1 ? 90 : 30;
+          const scaleX = 1 + deltaX / 200;
+          col.style.width = `${Math.max(30, baseWidth * scaleX)}px`;
+        }
+
+        // Adjust row heights
+        const rows = tableRef.current.getElementsByTagName('tr');
+        const scaleY = 1 + deltaY / 200;
+        for (let row of rows) {
+          row.style.height = `${Math.max(24, 24 * scaleY)}px`;
+        }
+      }
+    };
+
+    const handleMouseUp = () => {
+      setResizing(false);
+      setResizeType(null);
+      resizingRow.current = null;
+      resizingCol.current = null;
+      resizingColIndex.current = -1;
+    };
+
+    if (resizing) {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+    }
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [resizing, startY, startX, startHeight, startWidth, resizeType]);
+
+  const handleResizeStart = (
+    e: React.MouseEvent,
+    element: HTMLTableRowElement | HTMLTableCellElement | HTMLDivElement,
+    type: 'row' | 'col' | 'corner',
+    colIndex?: number
+  ) => {
+    setResizing(true);
+    setResizeType(type);
+    if (type === 'row') {
+      setStartY(e.clientY);
+      setStartHeight(element.offsetHeight);
+      resizingRow.current = element as HTMLTableRowElement;
+    } else if (type === 'col' && colIndex !== undefined) {
+      const table = (element as HTMLTableCellElement).closest('table');
+      if (table) {
+        const col = table.getElementsByTagName('col')[colIndex];
+        if (col) {
+          setStartX(e.clientX);
+          setStartWidth(col.offsetWidth);
+          resizingCol.current = col;
+          resizingColIndex.current = colIndex;
+        }
+      }
+    } else if (type === 'corner') {
+      setStartX(e.clientX);
+      setStartY(e.clientY);
+    }
+  };
 
   const handleWheel = (e: React.WheelEvent<HTMLInputElement>, param: keyof typeof params) => {
     e.preventDefault();
@@ -23,7 +115,7 @@ function App() {
       } else if (param === 'diameter' || param === 'centerThickness') {
         updateParam(param, Math.max(0, Math.round(currentValue) + delta));
       } else {
-        updateParam(param, Math.max(0, currentValue + delta));
+      updateParam(param, Math.max(0, currentValue + delta));
       }
     }
   };
@@ -39,174 +131,488 @@ function App() {
 
   return (
     <div className="h-screen bg-[#f7f6f2] p-2">
-      <div className="h-full max-w-6xl mx-auto flex flex-col">
+      <div className="h-full max-w-6xl mx-auto flex flex-col relative">
         <header className="py-2 text-center">
           <div className="flex items-center justify-center gap-2">
-            <Ruler className="w-6 h-6 text-indigo-600" />
             <h1 className="text-2xl font-bold text-gray-800">Lens Drawing Generator</h1>
           </div>
           <p className="text-gray-600 text-sm">in the ISO 10110 Format</p>
         </header>
 
-        <div className="flex-1 grid md:grid-cols-1 gap-2 bg-[#f7f6f2] rounded-xl shadow-lg p-2 overflow-hidden">
-          <div className="flex flex-col">
-            <div className="bg-[#f7f6f2] rounded-lg p-2 h-[35vh]">
-              <LensVisualizer params={params} updateParam={updateParam} />
+        <div className="flex-1 grid md:grid-cols-1 gap-2 revision-border bg-[#f7f6f2] p-2 overflow-hidden relative">
+          <div className="absolute top-0 right-0 z-[9999]" style={{ margin: 0, padding: 0 }}>
+            <div className="revision-border bg-[#f7f6f2] relative inline-block" style={{ marginTop: '-1px', marginRight: '-1px' }}>
+              <table ref={tableRef} className={`border-collapse bg-[#f7f6f2] relative z-[9999] resize-table table-fixed ${resizing ? 'resizing' : ''}`} style={{ width: 'auto' }}>
+                <colgroup>
+                  <col style={{ width: '30px' }} />
+                  <col style={{ width: '90px' }} />
+                  <col style={{ width: '30px' }} />
+                  <col style={{ width: '30px' }} />
+                </colgroup>
+                <thead>
+                  <tr>
+                    <th colSpan={4} className="revision-cell text-center text-[10px] font-['Century_Gothic'] relative whitespace-nowrap">
+                      REVISIONS
+                      <div 
+                        className="absolute bottom-0 left-0 w-full h-[4px] cursor-row-resize resize-handle"
+                        onMouseDown={(e) => handleResizeStart(e, e.currentTarget.closest('tr')!, 'row')}
+                      ></div>
+                    </th>
+                  </tr>
+                  <tr>
+                    <th className="revision-cell text-center text-[8px] font-['Century_Gothic'] relative whitespace-nowrap">
+                      REV.
+                      <div 
+                        className="absolute bottom-0 left-0 w-full h-[4px] cursor-row-resize resize-handle"
+                        onMouseDown={(e) => handleResizeStart(e, e.currentTarget.closest('tr')!, 'row')}
+                      ></div>
+                      <div 
+                        className="absolute top-0 left-0 w-[4px] h-full cursor-col-resize resize-handle-vertical"
+                        onMouseDown={(e) => handleResizeStart(e, e.currentTarget.closest('th')!, 'col', 0)}
+                      ></div>
+                    </th>
+                    <th className="revision-cell text-center text-[8px] font-['Century_Gothic'] relative whitespace-nowrap">
+                      DESCRIPTION
+                      <div 
+                        className="absolute bottom-0 left-0 w-full h-[4px] cursor-row-resize resize-handle"
+                        onMouseDown={(e) => handleResizeStart(e, e.currentTarget.closest('tr')!, 'row')}
+                      ></div>
+                      <div 
+                        className="absolute top-0 left-0 w-[4px] h-full cursor-col-resize resize-handle-vertical"
+                        onMouseDown={(e) => handleResizeStart(e, e.currentTarget.closest('th')!, 'col', 1)}
+                      ></div>
+                    </th>
+                    <th className="revision-cell text-center text-[8px] font-['Century_Gothic'] relative whitespace-nowrap">
+                      DATE
+                      <div 
+                        className="absolute bottom-0 left-0 w-full h-[4px] cursor-row-resize resize-handle"
+                        onMouseDown={(e) => handleResizeStart(e, e.currentTarget.closest('tr')!, 'row')}
+                      ></div>
+                      <div 
+                        className="absolute top-0 left-0 w-[4px] h-full cursor-col-resize resize-handle-vertical"
+                        onMouseDown={(e) => handleResizeStart(e, e.currentTarget.closest('th')!, 'col', 2)}
+                      ></div>
+                    </th>
+                    <th className="revision-cell text-center text-[8px] font-['Century_Gothic'] relative whitespace-nowrap">
+                      APPR.
+                      <div 
+                        className="absolute bottom-0 left-0 w-full h-[4px] cursor-row-resize resize-handle"
+                        onMouseDown={(e) => handleResizeStart(e, e.currentTarget.closest('tr')!, 'row')}
+                      ></div>
+                      <div 
+                        className="absolute top-0 left-0 w-[4px] h-full cursor-col-resize resize-handle-vertical"
+                        onMouseDown={(e) => handleResizeStart(e, e.currentTarget.closest('th')!, 'col', 3)}
+                      ></div>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td className="revision-cell text-center text-[8px] font-['Century_Gothic'] relative whitespace-nowrap">
+                      1
+                      <div 
+                        className="absolute bottom-0 left-0 w-full h-[4px] cursor-row-resize resize-handle"
+                        onMouseDown={(e) => handleResizeStart(e, e.currentTarget.closest('tr')!, 'row')}
+                      ></div>
+                      <div 
+                        className="absolute top-0 left-0 w-[4px] h-full cursor-col-resize resize-handle-vertical"
+                        onMouseDown={(e) => handleResizeStart(e, e.currentTarget.closest('td')!, 'col', 0)}
+                      ></div>
+                    </td>
+                    <td className="revision-cell text-center text-[8px] font-['Century_Gothic'] relative whitespace-nowrap">
+                      PRE-RELEASED DRAFT
+                      <div 
+                        className="absolute bottom-0 left-0 w-full h-[4px] cursor-row-resize resize-handle"
+                        onMouseDown={(e) => handleResizeStart(e, e.currentTarget.closest('tr')!, 'row')}
+                      ></div>
+                      <div 
+                        className="absolute top-0 left-0 w-[4px] h-full cursor-col-resize resize-handle-vertical"
+                        onMouseDown={(e) => handleResizeStart(e, e.currentTarget.closest('td')!, 'col', 1)}
+                      ></div>
+                    </td>
+                    <td className="revision-cell text-center text-[8px] font-['Century_Gothic'] relative whitespace-nowrap">
+                      {new Date().toLocaleDateString()}
+                      <div 
+                        className="absolute bottom-0 left-0 w-full h-[4px] cursor-row-resize resize-handle"
+                        onMouseDown={(e) => handleResizeStart(e, e.currentTarget.closest('tr')!, 'row')}
+                      ></div>
+                      <div 
+                        className="absolute top-0 left-0 w-[4px] h-full cursor-col-resize resize-handle-vertical"
+                        onMouseDown={(e) => handleResizeStart(e, e.currentTarget.closest('td')!, 'col', 2)}
+                      ></div>
+                    </td>
+                    <td className="revision-cell text-center text-[8px] font-['Century_Gothic'] relative whitespace-nowrap">
+                      SIGN IN
+                      <div 
+                        className="absolute bottom-0 left-0 w-full h-[4px] cursor-row-resize resize-handle"
+                        onMouseDown={(e) => handleResizeStart(e, e.currentTarget.closest('tr')!, 'row')}
+                      ></div>
+                      <div 
+                        className="absolute top-0 left-0 w-[4px] h-full cursor-col-resize resize-handle-vertical"
+                        onMouseDown={(e) => handleResizeStart(e, e.currentTarget.closest('td')!, 'col', 3)}
+                      ></div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <div 
+                className="absolute bottom-0 left-0 w-[12px] h-[12px] cursor-nw-resize corner-resize-handle"
+                onMouseDown={(e) => handleResizeStart(e, e.currentTarget, 'corner')}
+              ></div>
             </div>
           </div>
 
           <div className="flex flex-col">
-            <div className="grid grid-cols-3 gap-0 border border-gray-300">
-              {/* Column Headers */}
-              <div className="border-b border-r border-gray-300 p-2 bg-gray-50 font-medium text-center">LEFT SURFACE</div>
-              <div className="border-b border-r border-gray-300 p-2 bg-gray-50 font-medium text-center">MATERIAL</div>
-              <div className="border-b border-gray-300 p-2 bg-gray-50 font-medium text-center">RIGHT SURFACE</div>
-
-              {/* Column Contents */}
-              <div className="border-r border-gray-300 p-4 space-y-3">
-                {/* Left Surface Parameters */}
-                <div className="grid grid-cols-[120px_1fr] items-center gap-2">
-                  <span className="text-gray-700 text-sm">R (mm)</span>
-                  <div className="flex gap-2">
-                    <input
-                      type="text"
-                      value={formatRadius(params.radius1, params.type1)}
-                      onChange={(e) => updateParam('radius1', parseFloat(e.target.value))}
-                      onWheel={(e) => handleWheel(e, 'radius1')}
-                      className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                      disabled={params.type1 === 'PLANO'}
-                    />
-                    <select
-                      value={params.type1}
-                      onChange={(e) => updateParam('type1', e.target.value as 'CX' | 'CV' | 'PLANO')}
-                      onWheel={(e) => handleTypeWheel(e, 'type1')}
-                      className="block w-24 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                    >
-                      <option value="CV">CX</option>
-                      <option value="CX">CV</option>
-                      <option value="PLANO">∞</option>
-                    </select>
-                  </div>
-                </div>
-                <div className="grid grid-cols-[120px_1fr] items-center gap-2">
-                  <span className="text-gray-700 text-sm">∅e</span>
-                  <input type="text" value={`${params.leftDiameter} MIN`} readOnly className="block w-full rounded-md border-gray-300 bg-gray-50" />
-                </div>
-                <div className="grid grid-cols-[120px_1fr] items-center gap-2">
-                  <span className="text-gray-700 text-sm">PROT. CHAMFER</span>
-                  <input type="text" value={params.leftChamfer} className="block w-full rounded-md border-gray-300" />
-                </div>
-                <div className="grid grid-cols-[120px_1fr] items-center gap-2">
-                  <span className="text-gray-700 text-sm">⊚λ</span>
-                  <input type="text" value={params.leftWavelength} className="block w-full rounded-md border-gray-300" />
-                </div>
-                <div className="grid grid-cols-[30px_1fr] items-start gap-2">
-                  <span className="text-gray-700 text-sm">3/</span>
-                  <div className="ml-[90px] space-y-2">
-                    <input type="text" value="AR @0.500-0.600µm" className="block w-full rounded-md border-gray-300" />
-                    <input type="text" value="BBAR AVG T < 99.7%" className="block w-full rounded-md border-gray-300" />
-                  </div>
-                </div>
-                <div className="grid grid-cols-[30px_1fr] items-center gap-2">
-                  <span className="text-gray-700 text-sm">4/</span>
-                  <input type="text" value={params.leftBevel} className="ml-[90px] block w-[calc(100%-90px)] rounded-md border-gray-300" />
-                </div>
-                <div className="grid grid-cols-[30px_1fr] items-center gap-2">
-                  <span className="text-gray-700 text-sm">5/</span>
-                  <input type="text" value="60/40" className="ml-[90px] block w-[calc(100%-90px)] rounded-md border-gray-300" />
-                </div>
-                <div className="grid grid-cols-[30px_1fr] items-center gap-2">
-                  <span className="text-gray-700 text-sm">6/</span>
-                  <input type="text" value="N/A" className="ml-[90px] block w-[calc(100%-90px)] rounded-md border-gray-300" />
-                </div>
-              </div>
-
-              <div className="border-r border-gray-300 p-4 space-y-3">
-                {/* Material Parameters */}
-                <div className="grid grid-cols-[120px_1fr] items-center gap-2">
-                  <span className="text-gray-700 text-sm">GLASS</span>
-                  <input type="text" value={params.glass} className="block w-full rounded-md border-gray-300" />
-                </div>
-                <div className="grid grid-cols-[120px_1fr] items-center gap-2">
-                  <span className="text-gray-700 text-sm">Nd</span>
-                  <input type="text" value={params.nd} className="block w-full rounded-md border-gray-300" />
-                </div>
-                <div className="grid grid-cols-[120px_1fr] items-center gap-2">
-                  <span className="text-gray-700 text-sm">Vd</span>
-                  <input type="text" value={params.vd} className="block w-full rounded-md border-gray-300" />
-                </div>
-                <div className="grid grid-cols-[120px_1fr] items-center gap-2">
-                  <span className="text-gray-700 text-sm">0/</span>
-                  <input type="text" value={params.bubbles} className="block w-full rounded-md border-gray-300" />
-                </div>
-                <div className="grid grid-cols-[120px_1fr] items-center gap-2">
-                  <span className="text-gray-700 text-sm">1/</span>
-                  <input type="text" value={params.inclusions} className="block w-full rounded-md border-gray-300" />
-                </div>
-                <div className="grid grid-cols-[120px_1fr] items-center gap-2">
-                  <span className="text-gray-700 text-sm">2/</span>
-                  <input type="text" value={params.stress} className="block w-full rounded-md border-gray-300" />
-                </div>
-              </div>
-
-              <div className="p-4 space-y-3">
-                {/* Right Surface Parameters - Mirror of Left Surface */}
-                <div className="grid grid-cols-[120px_1fr] items-center gap-2">
-                  <span className="text-gray-700 text-sm">R (mm)</span>
-                  <div className="flex gap-2">
-                    <input
-                      type="text"
-                      value={formatRadius(params.radius2, params.type2)}
-                      onChange={(e) => updateParam('radius2', parseFloat(e.target.value))}
-                      onWheel={(e) => handleWheel(e, 'radius2')}
-                      className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                      disabled={params.type2 === 'PLANO'}
-                    />
-                    <select
-                      value={params.type2}
-                      onChange={(e) => updateParam('type2', e.target.value as 'CX' | 'CV' | 'PLANO')}
-                      onWheel={(e) => handleTypeWheel(e, 'type2')}
-                      className="block w-24 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                    >
-                      <option value="CV">CX</option>
-                      <option value="CX">CV</option>
-                      <option value="PLANO">∞</option>
-                    </select>
-                  </div>
-                </div>
-                <div className="grid grid-cols-[120px_1fr] items-center gap-2">
-                  <span className="text-gray-700 text-sm">∅e</span>
-                  <input type="text" value={`${params.rightDiameter} MIN`} readOnly className="block w-full rounded-md border-gray-300 bg-gray-50" />
-                </div>
-                <div className="grid grid-cols-[120px_1fr] items-center gap-2">
-                  <span className="text-gray-700 text-sm">PROT. CHAMFER</span>
-                  <input type="text" value={params.rightChamfer} className="block w-full rounded-md border-gray-300" />
-                </div>
-                <div className="grid grid-cols-[120px_1fr] items-center gap-2">
-                  <span className="text-gray-700 text-sm">⊚λ</span>
-                  <input type="text" value={params.rightWavelength} className="block w-full rounded-md border-gray-300" />
-                </div>
-                <div className="grid grid-cols-[30px_1fr] items-start gap-2">
-                  <span className="text-gray-700 text-sm">3/</span>
-                  <div className="ml-[90px] space-y-2">
-                    <input type="text" value="AR @0.500-0.600µm" className="block w-full rounded-md border-gray-300" />
-                    <input type="text" value="BBAR AVG T < 99.7%" className="block w-full rounded-md border-gray-300" />
-                  </div>
-                </div>
-                <div className="grid grid-cols-[30px_1fr] items-center gap-2">
-                  <span className="text-gray-700 text-sm">4/</span>
-                  <input type="text" value={params.rightBevel} className="ml-[90px] block w-[calc(100%-90px)] rounded-md border-gray-300" />
-                </div>
-                <div className="grid grid-cols-[30px_1fr] items-center gap-2">
-                  <span className="text-gray-700 text-sm">5/</span>
-                  <input type="text" value="60/40" className="ml-[90px] block w-[calc(100%-90px)] rounded-md border-gray-300" />
-                </div>
-                <div className="grid grid-cols-[30px_1fr] items-center gap-2">
-                  <span className="text-gray-700 text-sm">6/</span>
-                  <input type="text" value="N/A" className="ml-[90px] block w-[calc(100%-90px)] rounded-md border-gray-300" />
-                </div>
-              </div>
+            <div className="bg-[#f7f6f2] p-2 h-[35vh]">
+              <LensVisualizer params={params} updateParam={updateParam} />
             </div>
+              </div>
+
+          <div className="flex flex-col">
+            <table className="w-full border-collapse border border-black">
+              <thead>
+                <tr>
+                  <th className="border border-black p-1 bg-[#f7f6f2] font-medium text-center">LEFT SURFACE</th>
+                  <th className="border border-black p-1 bg-[#f7f6f2] font-medium text-center">MATERIAL</th>
+                  <th className="border border-black p-1 bg-[#f7f6f2] font-medium text-center">RIGHT SURFACE</th>
+                </tr>
+              </thead>
+              <tbody>
+                {/* R (mm) row */}
+                <tr>
+                  <td className="border border-black p-0">
+                    <div className="grid grid-cols-[30px_1fr_auto] items-center h-full">
+                      <div className="border-r border-black h-full p-1">
+                        <span className="text-gray-700 text-sm">R (mm)</span>
+                      </div>
+                      <div className="border-r border-black p-1">
+                        <input
+                          type="text"
+                          value={formatRadius(params.radius1, params.type1)}
+                          onChange={(e) => updateParam('radius1', parseFloat(e.target.value))}
+                          onWheel={(e) => handleWheel(e, 'radius1')}
+                          className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 bg-[#f7f6f2]"
+                          disabled={params.type1 === 'PLANO'}
+                        />
+                      </div>
+                      <div className="p-1">
+                        <select
+                          value={params.type1}
+                          onChange={(e) => updateParam('type1', e.target.value as 'CX' | 'CV' | 'PLANO')}
+                          onWheel={(e) => handleTypeWheel(e, 'type1')}
+                          className="block w-24 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 bg-[#f7f6f2]"
+                        >
+                          <option value="CV">CX</option>
+                          <option value="CX">CV</option>
+                          <option value="PLANO">∞</option>
+                        </select>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="border border-black p-0">
+                    <div className="grid grid-cols-[1fr_1fr] items-center h-full">
+                      <div className="border-r border-black h-full p-1 flex justify-end">
+                        <span className="text-gray-700 text-sm">GLASS</span>
+                      </div>
+                      <div className="p-1">
+                        <div className="grid grid-cols-[1fr_auto] items-center">
+                          <div className="border-r border-black pr-1">
+                            <input type="text" value={params.glass} className="block w-full rounded-md border-gray-300 bg-[#f7f6f2]" />
+                          </div>
+                          <div className="pl-1">
+                            <span>S-FPL51</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="border border-black p-0">
+                    <div className="grid grid-cols-[30px_1fr_auto] items-center h-full">
+                      <div className="border-r border-black h-full p-1">
+                        <span className="text-gray-700 text-sm">R (mm)</span>
+                      </div>
+                      <div className="border-r border-black p-1">
+                        <input
+                          type="text"
+                          value={formatRadius(params.radius2, params.type2)}
+                          onChange={(e) => updateParam('radius2', parseFloat(e.target.value))}
+                          onWheel={(e) => handleWheel(e, 'radius2')}
+                          className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 bg-[#f7f6f2]"
+                          disabled={params.type2 === 'PLANO'}
+                        />
+                      </div>
+                      <div className="p-1">
+                        <select
+                          value={params.type2}
+                          onChange={(e) => updateParam('type2', e.target.value as 'CX' | 'CV' | 'PLANO')}
+                          onWheel={(e) => handleTypeWheel(e, 'type2')}
+                          className="block w-24 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 bg-[#f7f6f2]"
+                        >
+                          <option value="CV">CX</option>
+                          <option value="CX">CV</option>
+                          <option value="PLANO">∞</option>
+                        </select>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                {/* ∅e row */}
+                <tr>
+                  <td className="border border-black p-0">
+                    <div className="grid grid-cols-[30px_1fr] items-stretch h-full">
+                      <div className="border-r border-black h-full p-1">
+                        <span className="text-gray-700 text-sm">∅e</span>
+                      </div>
+                      <div className="p-1">
+                        <input type="text" value={`${params.leftDiameter} MIN`} readOnly className="block w-full rounded-md border-gray-300 bg-[#f7f6f2]" />
+                      </div>
+                    </div>
+                  </td>
+                  <td className="border border-black p-0">
+                    <div className="grid grid-cols-[1fr_1fr] items-center h-full">
+                      <div className="border-r border-black h-full p-1 flex justify-end">
+                        <span className="text-gray-700 text-sm">Nd</span>
+                      </div>
+                      <div className="p-1">
+                        <div className="grid grid-cols-[1fr_auto] items-center">
+                          <div className="border-r border-black pr-1">
+                            <span>±</span>
+                          </div>
+                          <div className="pl-1">
+                            <span>0.0005</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="border border-black p-0">
+                    <div className="grid grid-cols-[30px_1fr] items-stretch h-full">
+                      <div className="border-r border-black h-full p-1">
+                        <span className="text-gray-700 text-sm">∅e</span>
+                      </div>
+                      <div className="p-1">
+                        <input type="text" value={`${params.rightDiameter} MIN`} readOnly className="block w-full rounded-md border-gray-300 bg-[#f7f6f2]" />
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                {/* PROT. CHAMFER row */}
+                <tr>
+                  <td className="border border-black p-0">
+                    <div className="grid grid-cols-[30px_1fr] items-center h-full">
+                      <div className="border-r border-black h-full p-1">
+                        <span className="text-gray-700 text-sm whitespace-nowrap">PROT.</span>
+                      </div>
+                      <div className="p-1">
+                        <div className="flex items-center gap-2">
+                          <span className="text-gray-700 text-sm">CHAMFER</span>
+                          <input type="text" value={params.leftChamfer} className="w-16 rounded-md border-gray-300 bg-[#f7f6f2]" />
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="border border-black p-0">
+                    <div className="grid grid-cols-[1fr_1fr] items-center h-full">
+                      <div className="border-r border-black h-full p-1 flex justify-end">
+                        <span className="text-gray-700 text-sm">Vd</span>
+                      </div>
+                      <div className="p-1">
+                        <div className="grid grid-cols-[1fr_auto] items-center">
+                          <div className="border-r border-black pr-1">
+                            <span>±</span>
+                          </div>
+                          <div className="pl-1">
+                            <span>0.5</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="border border-black p-0">
+                    <div className="grid grid-cols-[30px_1fr] items-center h-full">
+                      <div className="border-r border-black h-full p-1">
+                        <span className="text-gray-700 text-sm whitespace-nowrap">PROT.</span>
+                      </div>
+                      <div className="p-1">
+                        <div className="flex items-center gap-2">
+                          <span className="text-gray-700 text-sm">CHAMFER</span>
+                          <input type="text" value={params.rightChamfer} className="w-16 rounded-md border-gray-300 bg-[#f7f6f2]" />
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                {/* λ row */}
+                <tr>
+                  <td className="border border-black p-0">
+                    <div className="grid grid-cols-[30px_1fr] items-center h-full">
+                      <div className="border-r border-black h-full p-1">
+                        <span className="text-gray-700 text-sm">
+                          <span className="inline-block w-5 h-5 border border-gray-700 rounded-full text-center leading-4 -ml-1">λ</span>
+                        </span>
+                      </div>
+                      <div className="p-1">
+                        <input type="text" value={params.leftWavelength} className="block w-full rounded-md border-gray-300 bg-[#f7f6f2]" />
+                      </div>
+                    </div>
+                  </td>
+                  <td className="border border-black p-0">
+                    <div className="grid grid-cols-[1fr_1fr] items-center h-full">
+                      <div className="border-r border-black h-full p-1 flex justify-end">
+                        <span className="text-gray-700 text-sm">&nbsp;</span>
+                      </div>
+                      <div className="p-1">
+                        <div className="block w-full h-6"></div>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="border border-black p-0">
+                    <div className="grid grid-cols-[30px_1fr] items-center h-full">
+                      <div className="border-r border-black h-full p-1">
+                        <span className="text-gray-700 text-sm">
+                          <span className="inline-block w-5 h-5 border border-gray-700 rounded-full text-center leading-4 -ml-1">λ</span>
+                        </span>
+                      </div>
+                      <div className="p-1">
+                        <input type="text" value={params.rightWavelength} className="block w-full rounded-md border-gray-300 bg-[#f7f6f2]" />
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                {/* 3/ row */}
+                <tr>
+                  <td className="border border-black p-0">
+                    <div className="grid grid-cols-[30px_1fr] items-stretch h-full">
+                      <div className="border-r border-black h-full p-1">
+                        <span className="text-gray-700 text-sm">3/</span>
+                      </div>
+                      <div className="p-1 space-y-1">
+                        <input type="text" value="AR @0.500-0.600µm" className="block w-full rounded-md border-gray-300 bg-[#f7f6f2]" />
+                        <input type="text" value="BBAR AVG T < 99.7%" className="block w-full rounded-md border-gray-300 bg-[#f7f6f2]" />
+                      </div>
+                    </div>
+                  </td>
+                  <td className="border border-black p-0">
+                    <div className="grid grid-cols-[1fr_1fr] items-center h-full">
+                      <div className="border-r border-black h-full p-1 flex justify-end">
+                        <span className="text-gray-700 text-sm">0/</span>
+                      </div>
+                      <div className="p-1">
+                        <div className="grid grid-cols-[1fr_auto] items-center">
+                          <div className="border-r border-black pr-1">
+                            <span></span>
+                          </div>
+                          <div className="pl-1">
+                            <span>10</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="border border-black p-0">
+                    <div className="grid grid-cols-[30px_1fr] items-stretch h-full">
+                      <div className="border-r border-black h-full p-1">
+                        <span className="text-gray-700 text-sm">3/</span>
+                      </div>
+                      <div className="p-1 space-y-1">
+                        <input type="text" value="AR @0.500-0.600µm" className="block w-full rounded-md border-gray-300 bg-[#f7f6f2]" />
+                        <input type="text" value="BBAR AVG T < 99.7%" className="block w-full rounded-md border-gray-300 bg-[#f7f6f2]" />
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                {/* 4/ row */}
+                <tr>
+                  <td className="border border-black p-0">
+                    <div className="grid grid-cols-[30px_1fr] items-stretch h-full">
+                      <div className="border-r border-black h-full p-1">
+                        <span className="text-gray-700 text-sm">4/</span>
+                      </div>
+                      <div className="p-1">
+                        <input type="text" value={params.leftBevel} className="block w-full rounded-md border-gray-300 bg-[#f7f6f2]" />
+                      </div>
+                    </div>
+                  </td>
+                  <td className="border border-black p-0">
+                    <div className="grid grid-cols-[1fr_1fr] items-center h-full">
+                      <div className="border-r border-black h-full p-1 flex justify-end">
+                        <span className="text-gray-700 text-sm">1/</span>
+                      </div>
+                      <div className="p-1">
+                        <input type="text" value={params.inclusions} className="block w-full rounded-md border-gray-300 bg-[#f7f6f2]" />
+                      </div>
+                    </div>
+                  </td>
+                  <td className="border border-black p-0">
+                    <div className="grid grid-cols-[30px_1fr] items-stretch h-full">
+                      <div className="border-r border-black h-full p-1">
+                        <span className="text-gray-700 text-sm">4/</span>
+                      </div>
+                      <div className="p-1">
+                        <input type="text" value={params.rightBevel} className="block w-full rounded-md border-gray-300 bg-[#f7f6f2]" />
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                {/* 5/ row */}
+                <tr>
+                  <td className="border border-black p-0">
+                    <div className="grid grid-cols-[30px_1fr] items-stretch h-full">
+                      <div className="border-r border-black h-full p-1">
+                        <span className="text-gray-700 text-sm">5/</span>
+                      </div>
+                      <div className="p-1">
+                        <input type="text" value="60/40" className="block w-full rounded-md border-gray-300 bg-[#f7f6f2]" />
+                      </div>
+                    </div>
+                  </td>
+                  <td className="border border-black p-0">
+                    <div className="grid grid-cols-[1fr_1fr] items-center h-full">
+                      <div className="border-r border-black h-full p-1 flex justify-end">
+                        <span className="text-gray-700 text-sm">2/</span>
+                      </div>
+                      <div className="p-1">
+                        <input type="text" value={params.stress} className="block w-full rounded-md border-gray-300 bg-[#f7f6f2]" />
+                      </div>
+                    </div>
+                  </td>
+                  <td className="border border-black p-0">
+                    <div className="grid grid-cols-[30px_1fr] items-stretch h-full">
+                      <div className="border-r border-black h-full p-1">
+                        <span className="text-gray-700 text-sm">5/</span>
+                      </div>
+                      <div className="p-1">
+                        <input type="text" value="60/40" className="block w-full rounded-md border-gray-300 bg-[#f7f6f2]" />
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                {/* 6/ row */}
+                <tr>
+                  <td className="border border-black p-0">
+                    <div className="grid grid-cols-[30px_1fr] items-stretch h-full">
+                      <div className="border-r border-black h-full p-1">
+                        <span className="text-gray-700 text-sm">6/</span>
+                      </div>
+                      <div className="p-1">
+                        <input type="text" value="N/A" className="block w-full rounded-md border-gray-300 bg-[#f7f6f2]" />
+                      </div>
+                    </div>
+                  </td>
+                  <td className="border border-black p-2"></td>
+                  <td className="border border-black p-0">
+                    <div className="grid grid-cols-[30px_1fr] items-stretch h-full">
+                      <div className="border-r border-black h-full p-1">
+                        <span className="text-gray-700 text-sm">6/</span>
+                      </div>
+                      <div className="p-1">
+                        <input type="text" value="N/A" className="block w-full rounded-md border-gray-300 bg-[#f7f6f2]" />
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </div>

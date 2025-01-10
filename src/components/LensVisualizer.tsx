@@ -94,165 +94,167 @@ const LensVisualizer: React.FC<LensVisualizerProps> = ({ params, updateParam }) 
   const vertexDimensionY = centerY - halfDiameter - padding / 2;
 
   return (
-    <svg
-      width="100%"
-      height="100%"
-      viewBox={`0 0 ${width} ${height}`}
-      className="bg-white"
-      preserveAspectRatio="xMidYMid meet"
-    >
-      {/* Arrow markers */}
-      <defs>
-        <marker
-          id="arrow"
-          viewBox="0 0 10 10"
-          refX="5"
-          refY="5"
-          markerWidth="4"
-          markerHeight="4"
-          orient="auto-start-reverse"
+    <div className="relative w-full h-full">
+      <svg
+        width="100%"
+        height="100%"
+        viewBox={`0 0 ${width} ${height}`}
+        className="bg-[#f7f6f2]"
+        preserveAspectRatio="xMidYMid meet"
+      >
+        {/* Arrow markers */}
+        <defs>
+          <marker
+            id="arrow"
+            viewBox="0 0 10 10"
+            refX="5"
+            refY="5"
+            markerWidth="4"
+            markerHeight="4"
+            orient="auto-start-reverse"
+          >
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#000000" />
+          </marker>
+        </defs>
+
+        {/* Grid lines */}
+        <line
+          x1={x1 - padding || 0}
+          y1={centerY}
+          x2={x2 + padding || width}
+          y2={centerY}
+          stroke="#e5e7eb"
+          strokeWidth="1"
+          strokeDasharray="4,4"
+        />
+        <line
+          x1={centerX}
+          y1={padding}
+          x2={centerX}
+          y2={height - padding}
+          stroke="#e5e7eb"
+          strokeWidth="1"
+          strokeDasharray="4,4"
+        />
+
+        {/* Lens outline */}
+        <path
+          d={lensPath}
+          fill="none"
+          stroke="#000000"
+          strokeWidth="1"
+        />
+
+        {/* Vertex dots */}
+        <circle cx={vertex1.x || x1} cy={vertex1.y || centerY} r="3" fill="#000000" />
+        <circle cx={vertex2.x || x2} cy={vertex2.y || centerY} r="3" fill="#000000" />
+
+        {/* Vertex dimension */}
+        <line
+          x1={vertex1.x || x1}
+          y1={vertex1.y || centerY}
+          x2={vertex1.x || x1}
+          y2={vertexDimensionY}
+          stroke="#000000"
+          strokeWidth="1"
+          strokeDasharray="2,2"
+        />
+        <line
+          x1={vertex2.x || x2}
+          y1={vertex2.y || centerY}
+          x2={vertex2.x || x2}
+          y2={vertexDimensionY}
+          stroke="#000000"
+          strokeWidth="1"
+          strokeDasharray="2,2"
+        />
+        <line
+          x1={vertex1.x || x1}
+          y1={vertexDimensionY}
+          x2={vertex2.x || x2}
+          y2={vertexDimensionY}
+          stroke="#000000"
+          strokeWidth="1"
+          markerEnd="url(#arrow)"
+          markerStart="url(#arrow)"
+        />
+        <foreignObject
+          x={centerX - 60}
+          y={vertexDimensionY - 40}
+          width="120"
+          height="30"
         >
-          <path d="M 0 0 L 10 5 L 0 10 z" fill="#000000" />
-        </marker>
-      </defs>
+          <div className="flex items-center justify-center">
+            <input
+              type="number"
+              value={params.centerThickness}
+              onChange={(e) => updateParam('centerThickness', parseFloat(e.target.value))}
+              onWheel={(e) => {
+                e.preventDefault();
+                const delta = e.deltaY > 0 ? -1 : 1;
+                updateParam('centerThickness', Math.max(0, Math.round(params.centerThickness) + delta));
+              }}
+              className="w-20 text-center bg-[#f7f6f2] border-none focus:ring-0 text-sm"
+              min="0"
+              step="0.1"
+            />
+            <span className="text-sm text-gray-600 ml-1">mm</span>
+          </div>
+        </foreignObject>
 
-      {/* Grid lines */}
-      <line
-        x1={x1 - padding || 0}
-        y1={centerY}
-        x2={x2 + padding || width}
-        y2={centerY}
-        stroke="#e5e7eb"
-        strokeWidth="1"
-        strokeDasharray="4,4"
-      />
-      <line
-        x1={centerX}
-        y1={padding}
-        x2={centerX}
-        y2={height - padding}
-        stroke="#e5e7eb"
-        strokeWidth="1"
-        strokeDasharray="4,4"
-      />
-
-      {/* Lens outline */}
-      <path
-        d={lensPath}
-        fill="none"
-        stroke="#000000"
-        strokeWidth="2"
-      />
-
-      {/* Vertex dots */}
-      <circle cx={vertex1.x || x1} cy={vertex1.y || centerY} r="3" fill="#000000" />
-      <circle cx={vertex2.x || x2} cy={vertex2.y || centerY} r="3" fill="#000000" />
-
-      {/* Vertex dimension */}
-      <line
-        x1={vertex1.x || x1}
-        y1={vertex1.y || centerY}
-        x2={vertex1.x || x1}
-        y2={vertexDimensionY}
-        stroke="#000000"
-        strokeWidth="1"
-        strokeDasharray="2,2"
-      />
-      <line
-        x1={vertex2.x || x2}
-        y1={vertex2.y || centerY}
-        x2={vertex2.x || x2}
-        y2={vertexDimensionY}
-        stroke="#000000"
-        strokeWidth="1"
-        strokeDasharray="2,2"
-      />
-      <line
-        x1={vertex1.x || x1}
-        y1={vertexDimensionY}
-        x2={vertex2.x || x2}
-        y2={vertexDimensionY}
-        stroke="#000000"
-        strokeWidth="1"
-        markerEnd="url(#arrow)"
-        markerStart="url(#arrow)"
-      />
-      <foreignObject
-        x={centerX - 60}
-        y={vertexDimensionY - 40}
-        width="120"
-        height="30"
-      >
-        <div className="flex items-center justify-center">
-          <input
-            type="number"
-            value={params.centerThickness}
-            onChange={(e) => updateParam('centerThickness', parseFloat(e.target.value))}
-            onWheel={(e) => {
-              e.preventDefault();
-              const delta = e.deltaY > 0 ? -1 : 1;
-              updateParam('centerThickness', Math.max(0, Math.round(params.centerThickness) + delta));
-            }}
-            className="w-20 text-center bg-white border border-gray-300 rounded px-1 py-0.5 text-sm"
-            min="0"
-            step="0.1"
-          />
-          <span className="text-sm text-gray-600 ml-1">mm</span>
-        </div>
-      </foreignObject>
-
-      {/* Diameter dimension */}
-      <line
-        x1={x2}
-        y1={centerY - halfDiameter}
-        x2={x2 + padding + 3}
-        y2={centerY - halfDiameter}
-        stroke="#000000"
-        strokeWidth="1"
-      />
-      <line
-        x1={x2}
-        y1={centerY + halfDiameter}
-        x2={x2 + padding + 3}
-        y2={centerY + halfDiameter}
-        stroke="#000000"
-        strokeWidth="1"
-      />
-      <line
-        x1={x2 + padding}
-        y1={centerY - halfDiameter}
-        x2={x2 + padding}
-        y2={centerY + halfDiameter}
-        stroke="#000000"
-        strokeWidth="1"
-        markerEnd="url(#arrow)"
-        markerStart="url(#arrow)"
-      />
-      <foreignObject
-        x={x2 + padding + 10}
-        y={centerY - 15}
-        width="120"
-        height="30"
-      >
-        <div className="flex items-center">
-          <span className="text-sm text-gray-600 mr-1">∅</span>
-          <input
-            type="number"
-            value={params.diameter}
-            onChange={(e) => updateParam('diameter', parseFloat(e.target.value))}
-            onWheel={(e) => {
-              e.preventDefault();
-              const delta = e.deltaY > 0 ? -1 : 1;
-              updateParam('diameter', Math.max(0, Math.round(params.diameter) + delta));
-            }}
-            className="w-20 text-center bg-white border border-gray-300 rounded px-1 py-0.5 text-sm"
-            min="0"
-            step="0.001"
-          />
-          <span className="text-sm text-gray-600 ml-1">mm</span>
-        </div>
-      </foreignObject>
-    </svg>
+        {/* Diameter dimension */}
+        <line
+          x1={x2}
+          y1={centerY - halfDiameter}
+          x2={x2 + padding + 3}
+          y2={centerY - halfDiameter}
+          stroke="#000000"
+          strokeWidth="1"
+        />
+        <line
+          x1={x2}
+          y1={centerY + halfDiameter}
+          x2={x2 + padding + 3}
+          y2={centerY + halfDiameter}
+          stroke="#000000"
+          strokeWidth="1"
+        />
+        <line
+          x1={x2 + padding}
+          y1={centerY - halfDiameter}
+          x2={x2 + padding}
+          y2={centerY + halfDiameter}
+          stroke="#000000"
+          strokeWidth="1"
+          markerEnd="url(#arrow)"
+          markerStart="url(#arrow)"
+        />
+        <foreignObject
+          x={x2 + padding + 10}
+          y={centerY - 15}
+          width="120"
+          height="30"
+        >
+          <div className="flex items-center">
+            <span className="text-sm text-gray-600 mr-1">∅</span>
+            <input
+              type="number"
+              value={params.diameter}
+              onChange={(e) => updateParam('diameter', parseFloat(e.target.value))}
+              onWheel={(e) => {
+                e.preventDefault();
+                const delta = e.deltaY > 0 ? -1 : 1;
+                updateParam('diameter', Math.max(0, Math.round(params.diameter) + delta));
+              }}
+              className="w-20 text-center bg-[#f7f6f2] border-none focus:ring-0 text-sm"
+              min="0"
+              step="0.001"
+            />
+            <span className="text-sm text-gray-600 ml-1">mm</span>
+          </div>
+        </foreignObject>
+      </svg>
+    </div>
   );
 };
 
