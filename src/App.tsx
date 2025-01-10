@@ -38,7 +38,7 @@ function App() {
   };
 
   return (
-    <div className="h-screen bg-gradient-to-br from-blue-50 to-indigo-50 p-8">
+    <div className="h-screen bg-[#f0efea] p-8">
       <div className="h-full border border-black">
         <div className="h-full max-w-6xl mx-auto flex flex-col p-4">
           <header className="py-2 text-center">
