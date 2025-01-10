@@ -5,6 +5,18 @@ export interface LensParameters {
   type1: 'CX' | 'CV' | 'PLANO';
   radius2: number;
   type2: 'CX' | 'CV' | 'PLANO';
+  // Left surface parameters
+  leftDiameter: number;
+  leftChamfer: number;
+  leftAR: string;
+  leftBevel: string;
+  leftWavelength: number;
+  // Right surface parameters
+  rightDiameter: number;
+  rightChamfer: number;
+  rightAR: string;
+  rightBevel: string;
+  rightWavelength: number;
 }
 
 export interface LensMetrics {
