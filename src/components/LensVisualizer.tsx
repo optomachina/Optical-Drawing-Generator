@@ -4,9 +4,10 @@ import { calculateLensMetrics } from '../utils/lensCalculations';
 
 interface LensVisualizerProps {
   params: LensParameters;
+  updateParam: (key: keyof LensParameters, value: number | string) => void;
 }
 
-const LensVisualizer: React.FC<LensVisualizerProps> = ({ params }) => {
+const LensVisualizer: React.FC<LensVisualizerProps> = ({ params, updateParam }) => {
   const {
     diameter,
     centerThickness,
@@ -22,7 +23,7 @@ const LensVisualizer: React.FC<LensVisualizerProps> = ({ params }) => {
   // SVG viewport settings
   const width = 400;
   const height = 300;
-  const padding = 40;
+  const padding = 60;
   const scale = Math.min((width - 2 * padding) / (diameter * 1.2), (height - 2 * padding) / diameter) || 1;
   const centerX = width / 2;
   const centerY = height / 2;
@@ -98,6 +99,7 @@ const LensVisualizer: React.FC<LensVisualizerProps> = ({ params }) => {
       height="100%"
       viewBox={`0 0 ${width} ${height}`}
       className="bg-white"
+      preserveAspectRatio="xMidYMid meet"
     >
       {/* Arrow markers */}
       <defs>
@@ -175,14 +177,29 @@ const LensVisualizer: React.FC<LensVisualizerProps> = ({ params }) => {
         markerEnd="url(#arrow)"
         markerStart="url(#arrow)"
       />
-      <text
-        x={centerX}
-        y={vertexDimensionY - 8}
-        textAnchor="middle"
-        className="text-sm fill-gray-600"
+      <foreignObject
+        x={centerX - 60}
+        y={vertexDimensionY - 40}
+        width="120"
+        height="30"
       >
-        {`${centerThickness.toFixed(2)} mm`}
-      </text>
+        <div className="flex items-center justify-center">
+          <input
+            type="number"
+            value={params.centerThickness}
+            onChange={(e) => updateParam('centerThickness', parseFloat(e.target.value))}
+            onWheel={(e) => {
+              e.preventDefault();
+              const delta = e.deltaY > 0 ? -1 : 1;
+              updateParam('centerThickness', Math.max(0, Math.round(params.centerThickness) + delta));
+            }}
+            className="w-20 text-center bg-white border border-gray-300 rounded px-1 py-0.5 text-sm"
+            min="0"
+            step="0.1"
+          />
+          <span className="text-sm text-gray-600 ml-1">mm</span>
+        </div>
+      </foreignObject>
 
       {/* Diameter dimension */}
       <line
@@ -211,15 +228,30 @@ const LensVisualizer: React.FC<LensVisualizerProps> = ({ params }) => {
         markerEnd="url(#arrow)"
         markerStart="url(#arrow)"
       />
-      <text
+      <foreignObject
         x={x2 + padding + 10}
-        y={centerY}
-        textAnchor="start"
-        dominantBaseline="middle"
-        className="text-sm fill-gray-600"
+        y={centerY - 15}
+        width="120"
+        height="30"
       >
-        {`∅${diameter.toFixed(2)} mm`}
-      </text>
+        <div className="flex items-center">
+          <span className="text-sm text-gray-600 mr-1">∅</span>
+          <input
+            type="number"
+            value={params.diameter}
+            onChange={(e) => updateParam('diameter', parseFloat(e.target.value))}
+            onWheel={(e) => {
+              e.preventDefault();
+              const delta = e.deltaY > 0 ? -1 : 1;
+              updateParam('diameter', Math.max(0, Math.round(params.diameter) + delta));
+            }}
+            className="w-20 text-center bg-white border border-gray-300 rounded px-1 py-0.5 text-sm"
+            min="0"
+            step="0.001"
+          />
+          <span className="text-sm text-gray-600 ml-1">mm</span>
+        </div>
+      </foreignObject>
     </svg>
   );
 };

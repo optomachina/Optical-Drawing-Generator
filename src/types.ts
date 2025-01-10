@@ -14,12 +14,14 @@ export interface LensParameters {
   stress: string;  // 2/
   // Left surface parameters
   leftDiameter: number;
+  leftDiameterManuallySet: boolean;
   leftChamfer: number;
   leftAR: string;
   leftBevel: string;
   leftWavelength: number;
   // Right surface parameters
   rightDiameter: number;
+  rightDiameterManuallySet: boolean;
   rightChamfer: number;
   rightAR: string;
   rightBevel: string;

@@ -17,13 +17,15 @@ const defaultParams: LensParameters = {
   inclusions: "4 X 0.1",
   stress: "3:3",
   // Left surface parameters
-  leftDiameter: 41.0,
+  leftDiameter: 42.0,
+  leftDiameterManuallySet: false,
   leftChamfer: 0.1,
   leftAR: "AR @0.500-0.600µm BBAR AVG T < 99.7%",
   leftBevel: "3 (0.25)",
   leftWavelength: 0.5,
   // Right surface parameters
-  rightDiameter: 41.0,
+  rightDiameter: 42.0,
+  rightDiameterManuallySet: false,
   rightChamfer: 0.1,
   rightAR: "AR @0.500-0.600µm BBAR AVG T < 99.7%",
   rightBevel: "3 (0.25)",

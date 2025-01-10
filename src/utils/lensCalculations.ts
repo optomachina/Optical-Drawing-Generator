@@ -64,6 +64,21 @@ export function adjustLensParameters(
     const type = updatedParam === 'radius1' ? params.type1 : params.type2;
     const absValue = Math.abs(Number(newValue));
     newParams[updatedParam] = type === 'CX' ? absValue : -absValue;
+  } else if (updatedParam === 'diameter') {
+    // Update diameter and automatically adjust effective diameters if they haven't been manually set
+    newParams.diameter = Number(newValue);
+    if (!params.leftDiameterManuallySet) {
+      newParams.leftDiameter = Math.max(0, Number(newValue) - 1);
+    }
+    if (!params.rightDiameterManuallySet) {
+      newParams.rightDiameter = Math.max(0, Number(newValue) - 1);
+    }
+  } else if (updatedParam === 'leftDiameter') {
+    newParams.leftDiameter = Number(newValue);
+    newParams.leftDiameterManuallySet = true;
+  } else if (updatedParam === 'rightDiameter') {
+    newParams.rightDiameter = Number(newValue);
+    newParams.rightDiameterManuallySet = true;
   } else {
     // For all other parameters, just update the value directly
     newParams[updatedParam] = Number(newValue) || newParams[updatedParam];
