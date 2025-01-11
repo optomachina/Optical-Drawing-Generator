@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Ruler } from 'lucide-react';
 import LensVisualizer from './components/LensVisualizer';
 import { useLensParameters } from './hooks/useLensParameters';
@@ -7,98 +7,7 @@ import { formatRadius } from './utils/lensCalculations';
 function App() {
   const { params, updateParam } = useLensParameters();
   const [darkMode, setDarkMode] = useState(false);
-  const [resizing, setResizing] = useState(false);
-  const [startY, setStartY] = useState(0);
-  const [startX, setStartX] = useState(0);
-  const [startHeight, setStartHeight] = useState(0);
-  const [startWidth, setStartWidth] = useState(0);
-  const [resizeType, setResizeType] = useState<'row' | 'col' | 'corner' | null>(null);
-  const resizingRow = useRef<HTMLTableRowElement | null>(null);
-  const resizingCol = useRef<HTMLTableColElement | null>(null);
-  const resizingColIndex = useRef<number>(-1);
-  const tableRef = useRef<HTMLTableElement>(null);
-
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      if (!resizing) return;
-      
-      if (resizeType === 'row' && resizingRow.current) {
-        const deltaY = e.clientY - startY;
-        const newHeight = Math.max(24, startHeight + deltaY);
-        resizingRow.current.style.height = `${newHeight}px`;
-      } else if (resizeType === 'col' && resizingCol.current) {
-        const deltaX = e.clientX - startX;
-        const newWidth = Math.max(30, startWidth - deltaX);
-        resizingCol.current.style.width = `${newWidth}px`;
-      } else if (resizeType === 'corner' && tableRef.current) {
-        const deltaX = startX - e.clientX;
-        const deltaY = e.clientY - startY;
-        
-        // Adjust column widths
-        const cols = tableRef.current.getElementsByTagName('col');
-        for (let i = 0; i < cols.length; i++) {
-          const col = cols[i];
-          const baseWidth = i === 1 ? 90 : 30;
-          const scaleX = 1 + deltaX / 200;
-          col.style.width = `${Math.max(30, baseWidth * scaleX)}px`;
-        }
-
-        // Adjust row heights
-        const rows = tableRef.current.getElementsByTagName('tr');
-        const scaleY = 1 + deltaY / 200;
-        for (let row of rows) {
-          row.style.height = `${Math.max(24, 24 * scaleY)}px`;
-        }
-      }
-    };
-
-    const handleMouseUp = () => {
-      setResizing(false);
-      setResizeType(null);
-      resizingRow.current = null;
-      resizingCol.current = null;
-      resizingColIndex.current = -1;
-    };
-
-    if (resizing) {
-      document.addEventListener('mousemove', handleMouseMove);
-      document.addEventListener('mouseup', handleMouseUp);
-    }
-
-    return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
-    };
-  }, [resizing, startY, startX, startHeight, startWidth, resizeType]);
-
-  const handleResizeStart = (
-    e: React.MouseEvent,
-    element: HTMLTableRowElement | HTMLTableCellElement | HTMLDivElement,
-    type: 'row' | 'col' | 'corner',
-    colIndex?: number
-  ) => {
-    setResizing(true);
-    setResizeType(type);
-    if (type === 'row') {
-      setStartY(e.clientY);
-      setStartHeight(element.offsetHeight);
-      resizingRow.current = element as HTMLTableRowElement;
-    } else if (type === 'col' && colIndex !== undefined) {
-      const table = (element as HTMLTableCellElement).closest('table');
-      if (table) {
-        const col = table.getElementsByTagName('col')[colIndex];
-        if (col) {
-          setStartX(e.clientX);
-          setStartWidth(col.offsetWidth);
-          resizingCol.current = col;
-          resizingColIndex.current = colIndex;
-        }
-      }
-    } else if (type === 'corner') {
-      setStartX(e.clientX);
-      setStartY(e.clientY);
-    }
-  };
+  const [isPortrait, setIsPortrait] = useState(false);
 
   const handleWheel = (e: React.WheelEvent<HTMLInputElement>, param: keyof typeof params) => {
     e.preventDefault();
@@ -156,124 +65,52 @@ function App() {
 
         <div className={`flex-1 grid md:grid-cols-1 gap-2 revision-border ${darkMode ? 'bg-gray-900' : 'bg-[#f7f6f2]'} p-2 overflow-hidden relative`}>
           <div className="absolute top-0 right-0 z-[9999]" style={{ margin: 0, padding: 0 }}>
-            <div className={`revision-border ${darkMode ? 'bg-gray-900' : 'bg-[#f7f6f2]'} relative inline-block`} style={{ marginTop: '-1px', marginRight: '-1px' }}>
-              <table ref={tableRef} className={`border-collapse ${darkMode ? 'bg-gray-900 text-white' : 'bg-[#f7f6f2]'} relative z-[9999] resize-table table-fixed ${resizing ? 'resizing' : ''}`} style={{ width: 'auto' }}>
+            <div className={`${darkMode ? 'bg-gray-900' : 'bg-[#f7f6f2]'} relative inline-block border-l border-b border-black`} style={{ marginTop: '-1px', marginRight: '-1px' }}>
+              <table className={`border-collapse ${darkMode ? 'bg-gray-900 text-white' : 'bg-[#f7f6f2]'} relative z-[9999] w-auto`}>
                 <colgroup>
-                  <col style={{ width: '30px' }} />
-                  <col style={{ width: '90px' }} />
-                  <col style={{ width: '30px' }} />
-                  <col style={{ width: '30px' }} />
+                  <col className="w-auto min-w-[30px]" />
+                  <col className="w-auto" />
+                  <col className="w-auto min-w-[60px]" />
+                  <col className="w-auto min-w-[40px]" />
                 </colgroup>
                 <thead>
                   <tr>
-                    <th colSpan={4} className="revision-cell text-center text-[10px] font-['Century_Gothic'] relative whitespace-nowrap">
+                    <th colSpan={4} className="revision-cell text-center text-[10px] font-['Century_Gothic'] whitespace-nowrap py-0.5 px-1">
                       REVISIONS
-                      <div 
-                        className="absolute bottom-0 left-0 w-full h-[4px] cursor-row-resize resize-handle"
-                        onMouseDown={(e) => handleResizeStart(e, e.currentTarget.closest('tr')!, 'row')}
-                      ></div>
                     </th>
                   </tr>
                   <tr>
-                    <th className="revision-cell text-center text-[8px] font-['Century_Gothic'] relative whitespace-nowrap">
+                    <th className="revision-cell text-center text-[8px] font-['Century_Gothic'] whitespace-nowrap py-0.5 px-1">
                       REV.
-                      <div 
-                        className="absolute bottom-0 left-0 w-full h-[4px] cursor-row-resize resize-handle"
-                        onMouseDown={(e) => handleResizeStart(e, e.currentTarget.closest('tr')!, 'row')}
-                      ></div>
-                      <div 
-                        className="absolute top-0 left-0 w-[4px] h-full cursor-col-resize resize-handle-vertical"
-                        onMouseDown={(e) => handleResizeStart(e, e.currentTarget.closest('th')!, 'col', 0)}
-                      ></div>
                     </th>
-                    <th className="revision-cell text-center text-[8px] font-['Century_Gothic'] relative whitespace-nowrap">
+                    <th className="revision-cell text-center text-[8px] font-['Century_Gothic'] whitespace-nowrap py-0.5 px-1">
                       DESCRIPTION
-                      <div 
-                        className="absolute bottom-0 left-0 w-full h-[4px] cursor-row-resize resize-handle"
-                        onMouseDown={(e) => handleResizeStart(e, e.currentTarget.closest('tr')!, 'row')}
-                      ></div>
-                      <div 
-                        className="absolute top-0 left-0 w-[4px] h-full cursor-col-resize resize-handle-vertical"
-                        onMouseDown={(e) => handleResizeStart(e, e.currentTarget.closest('th')!, 'col', 1)}
-                      ></div>
                     </th>
-                    <th className="revision-cell text-center text-[8px] font-['Century_Gothic'] relative whitespace-nowrap">
+                    <th className="revision-cell text-center text-[8px] font-['Century_Gothic'] whitespace-nowrap py-0.5 px-1">
                       DATE
-                      <div 
-                        className="absolute bottom-0 left-0 w-full h-[4px] cursor-row-resize resize-handle"
-                        onMouseDown={(e) => handleResizeStart(e, e.currentTarget.closest('tr')!, 'row')}
-                      ></div>
-                      <div 
-                        className="absolute top-0 left-0 w-[4px] h-full cursor-col-resize resize-handle-vertical"
-                        onMouseDown={(e) => handleResizeStart(e, e.currentTarget.closest('th')!, 'col', 2)}
-                      ></div>
                     </th>
-                    <th className="revision-cell text-center text-[8px] font-['Century_Gothic'] relative whitespace-nowrap">
+                    <th className="revision-cell text-center text-[8px] font-['Century_Gothic'] whitespace-nowrap py-0.5 px-1">
                       APPR.
-                      <div 
-                        className="absolute bottom-0 left-0 w-full h-[4px] cursor-row-resize resize-handle"
-                        onMouseDown={(e) => handleResizeStart(e, e.currentTarget.closest('tr')!, 'row')}
-                      ></div>
-                      <div 
-                        className="absolute top-0 left-0 w-[4px] h-full cursor-col-resize resize-handle-vertical"
-                        onMouseDown={(e) => handleResizeStart(e, e.currentTarget.closest('th')!, 'col', 3)}
-                      ></div>
                     </th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr>
-                    <td className="revision-cell text-center text-[8px] font-['Century_Gothic'] relative whitespace-nowrap">
+                    <td className="revision-cell text-center text-[8px] font-['Century_Gothic'] whitespace-nowrap py-0.5 px-1">
                       1
-                      <div 
-                        className="absolute bottom-0 left-0 w-full h-[4px] cursor-row-resize resize-handle"
-                        onMouseDown={(e) => handleResizeStart(e, e.currentTarget.closest('tr')!, 'row')}
-                      ></div>
-                      <div 
-                        className="absolute top-0 left-0 w-[4px] h-full cursor-col-resize resize-handle-vertical"
-                        onMouseDown={(e) => handleResizeStart(e, e.currentTarget.closest('td')!, 'col', 0)}
-                      ></div>
                     </td>
-                    <td className="revision-cell text-center text-[8px] font-['Century_Gothic'] relative whitespace-nowrap">
+                    <td className="revision-cell text-center text-[8px] font-['Century_Gothic'] whitespace-nowrap py-0.5 px-1">
                       PRE-RELEASED DRAFT
-                      <div 
-                        className="absolute bottom-0 left-0 w-full h-[4px] cursor-row-resize resize-handle"
-                        onMouseDown={(e) => handleResizeStart(e, e.currentTarget.closest('tr')!, 'row')}
-                      ></div>
-                      <div 
-                        className="absolute top-0 left-0 w-[4px] h-full cursor-col-resize resize-handle-vertical"
-                        onMouseDown={(e) => handleResizeStart(e, e.currentTarget.closest('td')!, 'col', 1)}
-                      ></div>
                     </td>
-                    <td className="revision-cell text-center text-[8px] font-['Century_Gothic'] relative whitespace-nowrap">
+                    <td className="revision-cell text-center text-[8px] font-['Century_Gothic'] whitespace-nowrap py-0.5 px-1">
                       {new Date().toLocaleDateString()}
-                      <div 
-                        className="absolute bottom-0 left-0 w-full h-[4px] cursor-row-resize resize-handle"
-                        onMouseDown={(e) => handleResizeStart(e, e.currentTarget.closest('tr')!, 'row')}
-                      ></div>
-                      <div 
-                        className="absolute top-0 left-0 w-[4px] h-full cursor-col-resize resize-handle-vertical"
-                        onMouseDown={(e) => handleResizeStart(e, e.currentTarget.closest('td')!, 'col', 2)}
-                      ></div>
                     </td>
-                    <td className="revision-cell text-center text-[8px] font-['Century_Gothic'] relative whitespace-nowrap">
+                    <td className="revision-cell text-center text-[8px] font-['Century_Gothic'] whitespace-nowrap py-0.5 px-1">
                       SIGN IN
-                      <div 
-                        className="absolute bottom-0 left-0 w-full h-[4px] cursor-row-resize resize-handle"
-                        onMouseDown={(e) => handleResizeStart(e, e.currentTarget.closest('tr')!, 'row')}
-                      ></div>
-                      <div 
-                        className="absolute top-0 left-0 w-[4px] h-full cursor-col-resize resize-handle-vertical"
-                        onMouseDown={(e) => handleResizeStart(e, e.currentTarget.closest('td')!, 'col', 3)}
-                      ></div>
                     </td>
                   </tr>
                 </tbody>
               </table>
-              <div 
-                className="absolute bottom-0 left-0 w-[12px] h-[12px] cursor-nw-resize corner-resize-handle"
-                onMouseDown={(e) => handleResizeStart(e, e.currentTarget, 'corner')}
-              ></div>
             </div>
           </div>
 
