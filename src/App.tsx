@@ -382,11 +382,11 @@ function App() {
                         <span className={`text-sm ${darkMode ? 'text-white' : ''}`}>Nd</span>
                       </div>
                       <div className="p-1">
-                        <div className="grid grid-cols-[1fr_auto] items-center">
-                          <div className="border-r border-black pr-1">
+                        <div className="grid grid-cols-[1fr_auto] h-full">
+                          <div className="border-r border-black h-full p-1 flex items-center justify-end">
                             <span className={darkMode ? 'text-white' : ''}>±</span>
                           </div>
-                          <div className="pl-1">
+                          <div className="p-1 flex items-center">
                             <span className={darkMode ? 'text-white' : ''}>0.0005</span>
                           </div>
                         </div>
@@ -504,17 +504,17 @@ function App() {
                     <div className="grid grid-cols-[1fr_1fr] items-center h-full">
                       <div className="border-r border-black h-full p-1 flex justify-end">
                         <span className={`text-sm ${darkMode ? 'text-white' : ''}`}>0/</span>
-                </div>
+                      </div>
                       <div className="p-1">
-                        <div className="grid grid-cols-[1fr_auto] items-center">
-                          <div className="border-r border-black pr-1">
+                        <div className="grid grid-cols-[1fr_auto] h-full">
+                          <div className="border-r border-black h-full p-1 flex items-center justify-end">
                             <span className={darkMode ? 'text-white' : ''}></span>
-                </div>
-                          <div className="pl-1">
+                          </div>
+                          <div className="p-1 flex items-center">
                             <span className={darkMode ? 'text-white' : ''}>10</span>
-                </div>
-              </div>
-            </div>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </td>
                   <td className="border-l border-r border-b border-black p-0">
