@@ -466,13 +466,13 @@ function App() {
                   </td>
                   <td className="border-l border-b border-black p-0">
                     <div className="grid grid-cols-[1fr_1fr] items-center h-full">
-                      <div className="border-r border-black h-full p-1 flex justify-end">
+                      <div className="h-full p-1 flex justify-end">
                         <span className={`text-sm ${darkMode ? 'text-white' : ''}`}>&nbsp;</span>
                       </div>
                       <div className="p-1">
                         <div className="block w-full h-6"></div>
-                </div>
-                </div>
+                      </div>
+                    </div>
                   </td>
                   <td className="border-l border-r border-b border-black p-0">
                     <div className="grid grid-cols-[30px_1fr] h-[36px]">
