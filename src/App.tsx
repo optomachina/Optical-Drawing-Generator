@@ -295,37 +295,37 @@ function App() {
               <tbody>
                 {/* R (mm) row */}
                 <tr>
-                  <td className="border-l border-b border-black p-0">
-                    <div className="grid grid-cols-[30px_1fr_auto] items-center h-full">
+                  <td className="border-l border-black p-0">
+                    <div className={`grid grid-cols-[30px_1fr_auto] items-center h-full ${darkMode ? 'bg-gray-900' : 'bg-[#f7f6f2]'}`}>
                       <div className="h-full p-1 flex justify-center border-r border-black">
                         <span className={`text-sm ${darkMode ? 'text-white' : ''}`}>R</span>
                       </div>
-                      <div className="border-r border-black p-1">
-                      <input
-                        type="text"
-                        value={formatRadius(params.radius1, params.type1)}
-                        onChange={(e) => updateParam('radius1', parseFloat(e.target.value))}
-                        onWheel={(e) => handleWheel(e, 'radius1')}
+                      <div className="border-r border-black border-b p-1">
+                        <input
+                          type="text"
+                          value={formatRadius(params.radius1, params.type1)}
+                          onChange={(e) => updateParam('radius1', parseFloat(e.target.value))}
+                          onWheel={(e) => handleWheel(e, 'radius1')}
                           className={`block w-full rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 ${darkMode ? 'bg-gray-800 text-white' : 'bg-[#f7f6f2]'} text-sm`}
-                        disabled={params.type1 === 'PLANO'}
-                      />
+                          disabled={params.type1 === 'PLANO'}
+                        />
                       </div>
-                      <div className="p-1 w-[80px] flex justify-center">
-                      <select
-                        value={params.type1}
-                        onChange={(e) => updateParam('type1', e.target.value as 'CX' | 'CV' | 'PLANO')}
-                        onWheel={(e) => handleTypeWheel(e, 'type1')}
+                      <div className="p-1 w-[80px] flex justify-center border-b border-black">
+                        <select
+                          value={params.type1}
+                          onChange={(e) => updateParam('type1', e.target.value as 'CX' | 'CV' | 'PLANO')}
+                          onWheel={(e) => handleTypeWheel(e, 'type1')}
                           className={`appearance-none ${darkMode ? 'bg-gray-900 text-white' : 'bg-transparent'} text-sm text-center w-16 cursor-pointer focus:outline-none border-0 focus:ring-0 shadow-none focus:shadow-none hover:shadow-none active:shadow-none p-0 m-0`}
-                    >
-                      <option value="CV">CX</option>
-                      <option value="CX">CV</option>
-                      <option value="PLANO">∞</option>
-                      </select>
-                  </div>
-                </div>
+                        >
+                          <option value="CV">CX</option>
+                          <option value="CX">CV</option>
+                          <option value="PLANO">∞</option>
+                        </select>
+                      </div>
+                    </div>
                   </td>
-                  <td className="border-l border-b border-black p-0">
-                    <div className="grid grid-cols-[1fr_1fr] items-center h-full">
+                  <td className="border-l border-r border-b border-black p-0">
+                    <div className={`grid grid-cols-[1fr_1fr] items-center h-full ${darkMode ? 'bg-gray-900' : 'bg-[#f7f6f2]'}`}>
                       <div className="border-r border-black h-full p-1 flex items-center justify-end">
                         <span className={`text-sm ${darkMode ? 'text-white' : ''}`}>GLASS</span>
                       </div>
@@ -334,34 +334,34 @@ function App() {
                       </div>
                     </div>
                   </td>
-                  <td className="border-l border-r border-b border-black p-0">
-                    <div className="grid grid-cols-[30px_1fr_auto] items-center h-full">
+                  <td className="border-l border-r border-black p-0">
+                    <div className={`grid grid-cols-[30px_1fr_auto] items-center h-full ${darkMode ? 'bg-gray-900' : 'bg-[#f7f6f2]'}`}>
                       <div className="h-full p-1 flex justify-center border-r border-black">
                         <span className={`text-sm ${darkMode ? 'text-white' : ''}`}>R</span>
-                </div>
-                      <div className="border-r border-black p-1">
-                      <input
-                        type="text"
-                        value={formatRadius(params.radius2, params.type2)}
-                        onChange={(e) => updateParam('radius2', parseFloat(e.target.value))}
-                        onWheel={(e) => handleWheel(e, 'radius2')}
-                          className={`block w-full rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 ${darkMode ? 'bg-gray-800 text-white' : 'bg-[#f7f6f2]'} text-sm`}
-                        disabled={params.type2 === 'PLANO'}
-                      />
                       </div>
-                      <div className="p-1 w-[80px] flex justify-center">
-                      <select
-                        value={params.type2}
-                        onChange={(e) => updateParam('type2', e.target.value as 'CX' | 'CV' | 'PLANO')}
-                        onWheel={(e) => handleTypeWheel(e, 'type2')}
+                      <div className="border-r border-black border-b p-1">
+                        <input
+                          type="text"
+                          value={formatRadius(params.radius2, params.type2)}
+                          onChange={(e) => updateParam('radius2', parseFloat(e.target.value))}
+                          onWheel={(e) => handleWheel(e, 'radius2')}
+                          className={`block w-full rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 ${darkMode ? 'bg-gray-800 text-white' : 'bg-[#f7f6f2]'} text-sm`}
+                          disabled={params.type2 === 'PLANO'}
+                        />
+                      </div>
+                      <div className="p-1 w-[80px] flex justify-center border-b border-black">
+                        <select
+                          value={params.type2}
+                          onChange={(e) => updateParam('type2', e.target.value as 'CX' | 'CV' | 'PLANO')}
+                          onWheel={(e) => handleTypeWheel(e, 'type2')}
                           className={`appearance-none ${darkMode ? 'bg-gray-900 text-white' : 'bg-transparent'} text-sm text-center w-16 cursor-pointer focus:outline-none border-0 focus:ring-0 shadow-none focus:shadow-none hover:shadow-none active:shadow-none p-0 m-0`}
-                    >
-                      <option value="CV">CX</option>
-                      <option value="CX">CV</option>
-                      <option value="PLANO">∞</option>
-                      </select>
-                  </div>
-                </div>
+                        >
+                          <option value="CV">CX</option>
+                          <option value="CX">CV</option>
+                          <option value="PLANO">∞</option>
+                        </select>
+                      </div>
+                    </div>
                   </td>
                 </tr>
                 {/* ∅e row */}
@@ -378,18 +378,11 @@ function App() {
                   </td>
                   <td className="border-l border-b border-black p-0">
                     <div className="grid grid-cols-[1fr_1fr] h-[36px]">
-                      <div className="h-[36px] p-1 flex items-center justify-end border-r border-black">
+                      <div className="border-r border-black h-full p-1 flex items-center justify-end">
                         <span className={`text-sm ${darkMode ? 'text-white' : ''}`}>Nd</span>
                       </div>
-                      <div className="h-[36px] p-1 flex items-center">
-                        <div className="grid grid-cols-[1fr_auto] h-[36px] w-full">
-                          <div className="h-[36px] p-1 flex items-center justify-end border-r border-black">
-                            <span className={darkMode ? 'text-white' : ''}>±</span>
-                          </div>
-                          <div className="h-[36px] p-1 flex items-center">
-                            <span className={darkMode ? 'text-white' : ''}>0.0005</span>
-                          </div>
-                        </div>
+                      <div className="p-1 flex items-center">
+                        <span className={darkMode ? 'text-white' : ''}>±0.0005</span>
                       </div>
                     </div>
                   </td>
@@ -425,14 +418,7 @@ function App() {
                         <span className={`text-sm ${darkMode ? 'text-white' : ''}`}>Vd</span>
                       </div>
                       <div className="h-[36px] p-1 flex items-center">
-                        <div className="grid grid-cols-[1fr_auto] h-[36px] w-full">
-                          <div className="h-[36px] border-r border-black p-1 flex items-center justify-end">
-                            <span className={darkMode ? 'text-white' : ''}>±</span>
-                          </div>
-                          <div className="h-[36px] p-1 flex items-center">
-                            <span className={darkMode ? 'text-white' : ''}>0.5</span>
-                          </div>
-                        </div>
+                        <span className={darkMode ? 'text-white' : ''}>±0.5</span>
                       </div>
                     </div>
                   </td>
