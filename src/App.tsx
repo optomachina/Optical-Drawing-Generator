@@ -6,6 +6,7 @@ import { formatRadius } from './utils/lensCalculations';
 
 function App() {
   const { params, updateParam } = useLensParameters();
+  const [darkMode, setDarkMode] = useState(false);
   const [resizing, setResizing] = useState(false);
   const [startY, setStartY] = useState(0);
   const [startX, setStartX] = useState(0);
@@ -130,19 +131,33 @@ function App() {
   };
 
   return (
-    <div className="h-screen bg-[#f7f6f2] p-2">
+    <div className={`h-screen ${darkMode ? 'bg-gray-900' : 'bg-[#f7f6f2]'} p-2`}>
       <div className="h-full max-w-6xl mx-auto flex flex-col relative">
-        <header className="py-2 text-center">
+        <button 
+          onClick={() => setDarkMode(!darkMode)} 
+          className="absolute top-2 left-2 p-2 rounded-full hover:bg-opacity-10 hover:bg-black dark:hover:bg-white"
+        >
+          {darkMode ? (
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+            </svg>
+          ) : (
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+            </svg>
+          )}
+        </button>
+        <header className={`py-2 text-center ${darkMode ? 'text-white' : ''}`}>
           <div className="flex items-center justify-center gap-2">
-            <h1 className="text-2xl font-bold text-gray-800">Lens Drawing Generator</h1>
+            <h1 className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>Lens Drawing Generator</h1>
           </div>
-          <p className="text-gray-600 text-sm">in the ISO 10110 Format</p>
+          <p className={`${darkMode ? 'text-gray-300' : 'text-gray-600'} text-sm`}>in the ISO 10110 Format</p>
         </header>
 
-        <div className="flex-1 grid md:grid-cols-1 gap-2 revision-border bg-[#f7f6f2] p-2 overflow-hidden relative">
+        <div className={`flex-1 grid md:grid-cols-1 gap-2 revision-border ${darkMode ? 'bg-gray-900' : 'bg-[#f7f6f2]'} p-2 overflow-hidden relative`}>
           <div className="absolute top-0 right-0 z-[9999]" style={{ margin: 0, padding: 0 }}>
-            <div className="revision-border bg-[#f7f6f2] relative inline-block" style={{ marginTop: '-1px', marginRight: '-1px' }}>
-              <table ref={tableRef} className={`border-collapse bg-[#f7f6f2] relative z-[9999] resize-table table-fixed ${resizing ? 'resizing' : ''}`} style={{ width: 'auto' }}>
+            <div className={`revision-border ${darkMode ? 'bg-gray-900' : 'bg-[#f7f6f2]'} relative inline-block`} style={{ marginTop: '-1px', marginRight: '-1px' }}>
+              <table ref={tableRef} className={`border-collapse ${darkMode ? 'bg-gray-900 text-white' : 'bg-[#f7f6f2]'} relative z-[9999] resize-table table-fixed ${resizing ? 'resizing' : ''}`} style={{ width: 'auto' }}>
                 <colgroup>
                   <col style={{ width: '30px' }} />
                   <col style={{ width: '90px' }} />
@@ -263,18 +278,18 @@ function App() {
           </div>
 
           <div className="flex flex-col">
-            <div className="bg-[#f7f6f2] p-2 h-[35vh]">
-              <LensVisualizer params={params} updateParam={updateParam} />
+            <div className={`${darkMode ? 'bg-gray-900' : 'bg-[#f7f6f2]'} p-2 h-[35vh]`}>
+              <LensVisualizer params={params} updateParam={updateParam} darkMode={darkMode} />
             </div>
-          </div>
+              </div>
 
           <div className="flex flex-col -ml-[1px]">
             <table className="w-full border-collapse border-0">
               <thead>
                 <tr>
-                  <th className="border-t border-l border-b border-black p-1 bg-[#f7f6f2] font-medium text-center text-sm">LEFT SURFACE</th>
-                  <th className="border-t border-l border-b border-black p-1 bg-[#f7f6f2] font-medium text-center text-sm">MATERIAL</th>
-                  <th className="border-t border-l border-r border-b border-black p-1 bg-[#f7f6f2] font-medium text-center text-sm">RIGHT SURFACE</th>
+                  <th className={`border-t border-l border-b border-black p-1 ${darkMode ? 'bg-gray-900 text-white' : 'bg-[#f7f6f2]'} font-medium text-center text-sm`}>LEFT SURFACE</th>
+                  <th className={`border-t border-l border-b border-black p-1 ${darkMode ? 'bg-gray-900 text-white' : 'bg-[#f7f6f2]'} font-medium text-center text-sm`}>MATERIAL</th>
+                  <th className={`border-t border-l border-r border-b border-black p-1 ${darkMode ? 'bg-gray-900 text-white' : 'bg-[#f7f6f2]'} font-medium text-center text-sm`}>RIGHT SURFACE</th>
                 </tr>
               </thead>
               <tbody>
@@ -282,109 +297,109 @@ function App() {
                 <tr>
                   <td className="border-l border-b border-black p-0">
                     <div className="grid grid-cols-[30px_1fr_auto] items-center h-full">
-                      <div className="h-full p-1 flex justify-center items-center">
-                        <span className="text-sm">R</span>
+                      <div className="h-full p-1 flex justify-center border-r border-black">
+                        <span className={`text-sm ${darkMode ? 'text-white' : ''}`}>R</span>
                       </div>
                       <div className="border-r border-black p-1">
-                        <input
-                          type="text"
-                          value={formatRadius(params.radius1, params.type1)}
-                          onChange={(e) => updateParam('radius1', parseFloat(e.target.value))}
-                          onWheel={(e) => handleWheel(e, 'radius1')}
-                          className="block w-full rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 bg-[#f7f6f2] text-sm"
-                          disabled={params.type1 === 'PLANO'}
-                        />
+                      <input
+                        type="text"
+                        value={formatRadius(params.radius1, params.type1)}
+                        onChange={(e) => updateParam('radius1', parseFloat(e.target.value))}
+                        onWheel={(e) => handleWheel(e, 'radius1')}
+                          className={`block w-full rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 ${darkMode ? 'bg-gray-800 text-white' : 'bg-[#f7f6f2]'} text-sm`}
+                        disabled={params.type1 === 'PLANO'}
+                      />
                       </div>
                       <div className="p-1 w-[80px] flex justify-center">
-                        <select
-                          value={params.type1}
-                          onChange={(e) => updateParam('type1', e.target.value as 'CX' | 'CV' | 'PLANO')}
-                          onWheel={(e) => handleTypeWheel(e, 'type1')}
-                          className="appearance-none bg-[#f7f6f2] text-sm text-center w-16 cursor-pointer focus:outline-none border-none py-1"
-                        >
-                          <option value="CV">CX</option>
-                          <option value="CX">CV</option>
-                          <option value="PLANO">∞</option>
-                        </select>
-                      </div>
-                    </div>
+                      <select
+                        value={params.type1}
+                        onChange={(e) => updateParam('type1', e.target.value as 'CX' | 'CV' | 'PLANO')}
+                        onWheel={(e) => handleTypeWheel(e, 'type1')}
+                          className={`appearance-none ${darkMode ? 'bg-gray-900 text-white' : 'bg-transparent'} text-sm text-center w-16 cursor-pointer focus:outline-none border-0 focus:ring-0 shadow-none focus:shadow-none hover:shadow-none active:shadow-none p-0 m-0`}
+                    >
+                      <option value="CV">CX</option>
+                      <option value="CX">CV</option>
+                      <option value="PLANO">∞</option>
+                      </select>
+                  </div>
+                </div>
                   </td>
                   <td className="border-l border-b border-black p-0">
                     <div className="grid grid-cols-[1fr_1fr] items-center h-full">
                       <div className="border-r border-black h-full p-1 flex justify-end">
-                        <span className="text-sm">GLASS</span>
-                      </div>
+                        <span className={`text-sm ${darkMode ? 'text-white' : ''}`}>GLASS</span>
+                </div>
                       <div className="p-1">
-                        <input type="text" value={params.glass} className="block w-full rounded-md border-gray-300 bg-[#f7f6f2] text-sm" />
-                      </div>
-                    </div>
+                        <input type="text" value={params.glass} className={`block w-full rounded-md border-gray-300 ${darkMode ? 'bg-gray-800 text-white' : 'bg-[#f7f6f2]'} text-sm`} />
+                  </div>
+                </div>
                   </td>
                   <td className="border-l border-r border-b border-black p-0">
                     <div className="grid grid-cols-[30px_1fr_auto] items-center h-full">
-                      <div className="h-full p-1 flex justify-center items-center">
-                        <span className="text-sm">R</span>
-                      </div>
+                      <div className="h-full p-1 flex justify-center border-r border-black">
+                        <span className={`text-sm ${darkMode ? 'text-white' : ''}`}>R</span>
+                </div>
                       <div className="border-r border-black p-1">
-                        <input
-                          type="text"
-                          value={formatRadius(params.radius2, params.type2)}
-                          onChange={(e) => updateParam('radius2', parseFloat(e.target.value))}
-                          onWheel={(e) => handleWheel(e, 'radius2')}
-                          className="block w-full rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 bg-[#f7f6f2] text-sm"
-                          disabled={params.type2 === 'PLANO'}
-                        />
+                      <input
+                        type="text"
+                        value={formatRadius(params.radius2, params.type2)}
+                        onChange={(e) => updateParam('radius2', parseFloat(e.target.value))}
+                        onWheel={(e) => handleWheel(e, 'radius2')}
+                          className={`block w-full rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 ${darkMode ? 'bg-gray-800 text-white' : 'bg-[#f7f6f2]'} text-sm`}
+                        disabled={params.type2 === 'PLANO'}
+                      />
                       </div>
                       <div className="p-1 w-[80px] flex justify-center">
-                        <select
-                          value={params.type2}
-                          onChange={(e) => updateParam('type2', e.target.value as 'CX' | 'CV' | 'PLANO')}
-                          onWheel={(e) => handleTypeWheel(e, 'type2')}
-                          className="appearance-none bg-[#f7f6f2] text-sm text-center w-16 cursor-pointer focus:outline-none border-none py-1"
-                        >
-                          <option value="CV">CX</option>
-                          <option value="CX">CV</option>
-                          <option value="PLANO">∞</option>
-                        </select>
-                      </div>
-                    </div>
+                      <select
+                        value={params.type2}
+                        onChange={(e) => updateParam('type2', e.target.value as 'CX' | 'CV' | 'PLANO')}
+                        onWheel={(e) => handleTypeWheel(e, 'type2')}
+                          className={`appearance-none ${darkMode ? 'bg-gray-900 text-white' : 'bg-transparent'} text-sm text-center w-16 cursor-pointer focus:outline-none border-0 focus:ring-0 shadow-none focus:shadow-none hover:shadow-none active:shadow-none p-0 m-0`}
+                    >
+                      <option value="CV">CX</option>
+                      <option value="CX">CV</option>
+                      <option value="PLANO">∞</option>
+                      </select>
+                  </div>
+                </div>
                   </td>
                 </tr>
                 {/* ∅e row */}
-                <tr>
+                <tr className="h-[36px]">
                   <td className="border-l border-b border-black p-0">
-                    <div className="grid grid-cols-[30px_1fr] items-stretch h-full">
-                      <div className="h-full p-1 flex justify-center">
-                        <span className="text-sm">∅e</span>
+                    <div className="grid grid-cols-[30px_1fr] h-[36px]">
+                      <div className="h-[36px] p-1 flex justify-center items-center border-r border-black">
+                        <span className={`text-sm ${darkMode ? 'text-white' : ''}`}>∅e</span>
                       </div>
-                      <div className="p-1">
-                        <input type="text" value={`${params.leftDiameter} MIN`} readOnly className="block w-full rounded-md border-gray-300 bg-[#f7f6f2] text-sm" />
+                      <div className="h-[36px] p-1 flex items-center">
+                        <input type="text" value={`${params.leftDiameter} MIN`} readOnly className={`text-sm ${darkMode ? 'bg-gray-800 text-white' : 'bg-[#f7f6f2]'} w-full border-0 focus:ring-0`} />
                       </div>
                     </div>
                   </td>
                   <td className="border-l border-b border-black p-0">
                     <div className="grid grid-cols-[1fr_1fr] items-center h-full">
                       <div className="border-r border-black h-full p-1 flex justify-end">
-                        <span className="text-sm">Nd</span>
+                        <span className={`text-sm ${darkMode ? 'text-white' : ''}`}>Nd</span>
                       </div>
                       <div className="p-1">
                         <div className="grid grid-cols-[1fr_auto] items-center">
                           <div className="border-r border-black pr-1">
-                            <span>±</span>
+                            <span className={darkMode ? 'text-white' : ''}>±</span>
                           </div>
                           <div className="pl-1">
-                            <span>0.0005</span>
+                            <span className={darkMode ? 'text-white' : ''}>0.0005</span>
                           </div>
                         </div>
                       </div>
                     </div>
                   </td>
                   <td className="border-l border-r border-b border-black p-0">
-                    <div className="grid grid-cols-[30px_1fr] items-stretch h-full">
-                      <div className="h-full p-1 flex justify-center">
-                        <span className="text-sm">∅e</span>
+                    <div className="grid grid-cols-[30px_1fr] h-[36px]">
+                      <div className="h-[36px] p-1 flex justify-center items-center border-r border-black">
+                        <span className={`text-sm ${darkMode ? 'text-white' : ''}`}>∅e</span>
                       </div>
-                      <div className="p-1">
-                        <input type="text" value={`${params.rightDiameter} MIN`} readOnly className="block w-full rounded-md border-gray-300 bg-[#f7f6f2] text-sm" />
+                      <div className="h-[36px] p-1 flex items-center">
+                        <input type="text" value={`${params.rightDiameter} MIN`} readOnly className={`text-sm ${darkMode ? 'bg-gray-800 text-white' : 'bg-[#f7f6f2]'} w-full border-0 focus:ring-0`} />
                       </div>
                     </div>
                   </td>
@@ -392,94 +407,82 @@ function App() {
                 {/* PROT. CHAMFER row */}
                 <tr>
                   <td className="border-l border-b border-black p-0">
-                    <table className="w-full h-full border-collapse">
-                      <tr>
-                        <td className="w-[30px]">
-                          <span className="text-sm whitespace-nowrap">&nbsp;</span>
-                        </td>
-                        <td className="border-r border-black">
-                          <div className="flex items-center justify-end h-full">
-                            <span className="text-sm pr-2">PROT. CHAMFER</span>
-                          </div>
-                        </td>
-                        <td className="w-[80px]">
-                          <div className="flex items-center justify-center h-full">
-                            <input type="text" value="0.1-0.3" className="w-16 rounded-md border-gray-300 bg-[#f7f6f2] text-sm text-center" />
-                          </div>
-                        </td>
-                      </tr>
-                    </table>
+                    <div className="grid grid-cols-[30px_1fr_auto] items-center h-full">
+                      <div className="h-full p-1 flex justify-center">
+                        <span className={`text-sm ${darkMode ? 'text-white' : ''}`}>&nbsp;</span>
+                      </div>
+                      <div className="border-r border-black p-1">
+                        <span className={`text-sm pr-2 ${darkMode ? 'text-white' : ''}`}>PROT. CHAMFER</span>
+                      </div>
+                      <div className="p-1 w-[80px] flex justify-center">
+                        <input type="text" value="0.1-0.3" className={`w-16 text-center ${darkMode ? 'bg-gray-800 text-white' : 'bg-[#f7f6f2]'} text-sm`} />
+                      </div>
+                    </div>
                   </td>
                   <td className="border-l border-b border-black p-0">
                     <div className="grid grid-cols-[1fr_1fr] items-center h-full">
                       <div className="border-r border-black h-full p-1 flex justify-end">
-                        <span className="text-sm">Vd</span>
+                        <span className={`text-sm ${darkMode ? 'text-white' : ''}`}>Vd</span>
                       </div>
                       <div className="p-1">
                         <div className="grid grid-cols-[1fr_auto] items-center">
                           <div className="border-r border-black pr-1">
-                            <span>±</span>
+                            <span className={darkMode ? 'text-white' : ''}>±</span>
                           </div>
                           <div className="pl-1">
-                            <span>0.5</span>
+                            <span className={darkMode ? 'text-white' : ''}>0.5</span>
                           </div>
                         </div>
                       </div>
                     </div>
                   </td>
                   <td className="border-l border-r border-b border-black p-0">
-                    <table className="w-full h-full border-collapse">
-                      <tr>
-                        <td className="w-[30px]">
-                          <span className="text-sm whitespace-nowrap">&nbsp;</span>
-                        </td>
-                        <td className="border-r border-black">
-                          <div className="flex items-center justify-end h-full">
-                            <span className="text-sm pr-2">PROT. CHAMFER</span>
-                          </div>
-                        </td>
-                        <td className="w-[80px]">
-                          <div className="flex items-center justify-center h-full">
-                            <input type="text" value="0.1-0.3" className="w-16 rounded-md border-gray-300 bg-[#f7f6f2] text-sm text-center" />
-                          </div>
-                        </td>
-                      </tr>
-                    </table>
+                    <div className="grid grid-cols-[30px_1fr_auto] items-center h-full">
+                      <div className="h-full p-1 flex justify-center">
+                        <span className={`text-sm ${darkMode ? 'text-white' : ''}`}>&nbsp;</span>
+                      </div>
+                      <div className="border-r border-black p-1">
+                        <span className={`text-sm pr-2 ${darkMode ? 'text-white' : ''}`}>PROT. CHAMFER</span>
+                      </div>
+                      <div className="p-1 w-[80px] flex justify-center">
+                        <input type="text" value="0.1-0.3" className={`w-16 text-center ${darkMode ? 'bg-gray-800 text-white' : 'bg-[#f7f6f2]'} text-sm`} />
+                      </div>
+                    </div>
                   </td>
                 </tr>
                 {/* λ row */}
-                <tr>
+                <tr className="h-[36px]">
                   <td className="border-l border-b border-black p-0">
-                    <div className="grid grid-cols-[30px_1fr] items-center h-full">
-                      <div className="h-full p-1 flex justify-center">
-                        <span className="text-sm">
+                    <div className="grid grid-cols-[30px_1fr] h-[36px]">
+                      <div className="h-[36px] p-1 flex justify-center items-center border-r border-black">
+                        <span className={`text-sm ${darkMode ? 'text-white' : ''}`}>
                           <span className="inline-block w-5 h-5 border border-gray-700 rounded-full text-center leading-4 -ml-1">λ</span>
                         </span>
                       </div>
-                      <div className="p-1">
-                        <input type="text" value={params.leftWavelength} className="block w-full rounded-md border-gray-300 bg-[#f7f6f2] text-sm" />
+                      <div className="h-[36px] p-1 flex items-center">
+                        <input type="text" value={params.leftWavelength} className={`text-sm ${darkMode ? 'bg-gray-800 text-white' : 'bg-[#f7f6f2]'} w-full border-0 focus:ring-0`} />
                       </div>
                     </div>
                   </td>
                   <td className="border-l border-b border-black p-0">
                     <div className="grid grid-cols-[1fr_1fr] items-center h-full">
                       <div className="border-r border-black h-full p-1 flex justify-end">
-                        <span className="text-sm">&nbsp;</span>
+                        <span className={`text-sm ${darkMode ? 'text-white' : ''}`}>&nbsp;</span>
                       </div>
                       <div className="p-1">
                         <div className="block w-full h-6"></div>
-                      </div>
-                    </div>
+                </div>
+                </div>
                   </td>
                   <td className="border-l border-r border-b border-black p-0">
-                    <div className="grid grid-cols-[30px_1fr] items-center h-full">
-                      <div className="h-full p-1 flex justify-center">
-                        <span className="text-sm">
-                          <span className="inline-block w-5 h-5 border border-gray-700 rounded-full text-center leading-4 -ml-1">λ</span>
-                        </span>
+                    <div className="grid grid-cols-[30px_1fr] h-[36px]">
+                      <div className="h-[36px] p-1 flex justify-center items-center border-r border-black">
+                        <span className={`text-sm ${darkMode ? 'text-white' : ''}`}>
+                    <span className="inline-block w-5 h-5 border border-gray-700 rounded-full text-center leading-4 -ml-1">λ</span>
+                  </span>
                       </div>
-                      <div className="p-1">
-                        <input type="text" value={params.rightWavelength} className="block w-full rounded-md border-gray-300 bg-[#f7f6f2] text-sm" />
+                      <div className="h-[36px] p-1 flex items-center">
+                        <input type="text" value={params.rightWavelength} className={`text-sm ${darkMode ? 'bg-gray-800 text-white' : 'bg-[#f7f6f2]'} w-full border-0 focus:ring-0`} />
                       </div>
                     </div>
                   </td>
@@ -487,41 +490,41 @@ function App() {
                 {/* 3/ row */}
                 <tr>
                   <td className="border-l border-b border-black p-0">
-                    <div className="grid grid-cols-[30px_1fr] items-stretch h-full">
-                      <div className="h-full p-1 flex justify-center">
-                        <span className="text-sm">3/</span>
-                      </div>
+                    <div className="grid grid-cols-[30px_1fr] items-center h-full">
+                      <div className="h-full p-1 flex justify-center border-r border-black">
+                        <span className={`text-sm ${darkMode ? 'text-white' : ''}`}>3/</span>
+                </div>
                       <div className="p-1 space-y-1">
-                        <input type="text" value="AR @0.500-0.600µm" className="block w-full rounded-md border-gray-300 bg-[#f7f6f2] text-sm" />
-                        <input type="text" value="BBAR AVG T < 99.7%" className="block w-full rounded-md border-gray-300 bg-[#f7f6f2] text-sm" />
-                      </div>
-                    </div>
+                        <input type="text" value="AR @0.500-0.600µm" className={`block w-full rounded-md border-gray-300 ${darkMode ? 'bg-gray-800 text-white' : 'bg-[#f7f6f2]'} text-sm`} />
+                        <input type="text" value="BBAR AVG T < 99.7%" className={`block w-full rounded-md border-gray-300 ${darkMode ? 'bg-gray-800 text-white' : 'bg-[#f7f6f2]'} text-sm`} />
+                  </div>
+                </div>
                   </td>
                   <td className="border-l border-b border-black p-0">
                     <div className="grid grid-cols-[1fr_1fr] items-center h-full">
                       <div className="border-r border-black h-full p-1 flex justify-end">
-                        <span className="text-sm">0/</span>
-                      </div>
+                        <span className={`text-sm ${darkMode ? 'text-white' : ''}`}>0/</span>
+                </div>
                       <div className="p-1">
                         <div className="grid grid-cols-[1fr_auto] items-center">
                           <div className="border-r border-black pr-1">
-                            <span></span>
-                          </div>
+                            <span className={darkMode ? 'text-white' : ''}></span>
+                </div>
                           <div className="pl-1">
-                            <span>10</span>
-                          </div>
-                        </div>
-                      </div>
+                            <span className={darkMode ? 'text-white' : ''}>10</span>
+                </div>
+              </div>
+            </div>
                     </div>
                   </td>
                   <td className="border-l border-r border-b border-black p-0">
-                    <div className="grid grid-cols-[30px_1fr] items-stretch h-full">
-                      <div className="h-full p-1 flex justify-center">
-                        <span className="text-sm">3/</span>
+                    <div className="grid grid-cols-[30px_1fr] items-center h-full">
+                      <div className="h-full p-1 flex justify-center border-r border-black">
+                        <span className={`text-sm ${darkMode ? 'text-white' : ''}`}>3/</span>
                       </div>
                       <div className="p-1 space-y-1">
-                        <input type="text" value="AR @0.500-0.600µm" className="block w-full rounded-md border-gray-300 bg-[#f7f6f2] text-sm" />
-                        <input type="text" value="BBAR AVG T < 99.7%" className="block w-full rounded-md border-gray-300 bg-[#f7f6f2] text-sm" />
+                        <input type="text" value="AR @0.500-0.600µm" className={`block w-full rounded-md border-gray-300 ${darkMode ? 'bg-gray-800 text-white' : 'bg-[#f7f6f2]'} text-sm`} />
+                        <input type="text" value="BBAR AVG T < 99.7%" className={`block w-full rounded-md border-gray-300 ${darkMode ? 'bg-gray-800 text-white' : 'bg-[#f7f6f2]'} text-sm`} />
                       </div>
                     </div>
                   </td>
@@ -529,32 +532,32 @@ function App() {
                 {/* 4/ row */}
                 <tr>
                   <td className="border-l border-b border-black p-0">
-                    <div className="grid grid-cols-[30px_1fr] items-stretch h-full">
-                      <div className="h-full p-1 flex justify-center">
-                        <span className="text-sm">4/</span>
+                    <div className="grid grid-cols-[30px_1fr] items-center h-full">
+                      <div className="h-full p-1 flex justify-center border-r border-black">
+                        <span className={`text-sm ${darkMode ? 'text-white' : ''}`}>4/</span>
                       </div>
                       <div className="p-1">
-                        <input type="text" value={params.leftBevel} className="block w-full rounded-md border-gray-300 bg-[#f7f6f2] text-sm" />
+                        <input type="text" value={params.leftBevel} className={`block w-full rounded-md border-gray-300 ${darkMode ? 'bg-gray-800 text-white' : 'bg-[#f7f6f2]'} text-sm`} />
                       </div>
                     </div>
                   </td>
                   <td className="border-l border-b border-black p-0">
                     <div className="grid grid-cols-[1fr_1fr] items-center h-full">
                       <div className="border-r border-black h-full p-1 flex justify-end">
-                        <span className="text-sm">1/</span>
+                        <span className={`text-sm ${darkMode ? 'text-white' : ''}`}>1/</span>
                       </div>
                       <div className="p-1">
-                        <input type="text" value={params.inclusions} className="block w-full rounded-md border-gray-300 bg-[#f7f6f2] text-sm" />
+                        <input type="text" value={params.inclusions} className={`block w-full rounded-md border-gray-300 ${darkMode ? 'bg-gray-800 text-white' : 'bg-[#f7f6f2]'} text-sm`} />
                       </div>
                     </div>
                   </td>
                   <td className="border-l border-r border-b border-black p-0">
-                    <div className="grid grid-cols-[30px_1fr] items-stretch h-full">
-                      <div className="h-full p-1 flex justify-center">
-                        <span className="text-sm">4/</span>
+                    <div className="grid grid-cols-[30px_1fr] items-center h-full">
+                      <div className="h-full p-1 flex justify-center border-r border-black">
+                        <span className={`text-sm ${darkMode ? 'text-white' : ''}`}>4/</span>
                       </div>
                       <div className="p-1">
-                        <input type="text" value={params.rightBevel} className="block w-full rounded-md border-gray-300 bg-[#f7f6f2] text-sm" />
+                        <input type="text" value={params.rightBevel} className={`block w-full rounded-md border-gray-300 ${darkMode ? 'bg-gray-800 text-white' : 'bg-[#f7f6f2]'} text-sm`} />
                       </div>
                     </div>
                   </td>
@@ -562,32 +565,32 @@ function App() {
                 {/* 5/ row */}
                 <tr>
                   <td className="border-l border-b border-black p-0">
-                    <div className="grid grid-cols-[30px_1fr] items-stretch h-full">
-                      <div className="h-full p-1 flex justify-center">
-                        <span className="text-sm">5/</span>
+                    <div className="grid grid-cols-[30px_1fr] items-center h-full">
+                      <div className="h-full p-1 flex justify-center border-r border-black">
+                        <span className={`text-sm ${darkMode ? 'text-white' : ''}`}>5/</span>
                       </div>
                       <div className="p-1">
-                        <input type="text" value="60/40" className="block w-full rounded-md border-gray-300 bg-[#f7f6f2] text-sm" />
+                        <input type="text" value="60/40" className={`block w-full rounded-md border-gray-300 ${darkMode ? 'bg-gray-800 text-white' : 'bg-[#f7f6f2]'} text-sm`} />
                       </div>
                     </div>
                   </td>
                   <td className="border-l border-b border-black p-0">
                     <div className="grid grid-cols-[1fr_1fr] items-center h-full">
                       <div className="border-r border-black h-full p-1 flex justify-end">
-                        <span className="text-sm">2/</span>
+                        <span className={`text-sm ${darkMode ? 'text-white' : ''}`}>2/</span>
                       </div>
                       <div className="p-1">
-                        <input type="text" value={params.stress} className="block w-full rounded-md border-gray-300 bg-[#f7f6f2] text-sm" />
+                        <input type="text" value={params.stress} className={`block w-full rounded-md border-gray-300 ${darkMode ? 'bg-gray-800 text-white' : 'bg-[#f7f6f2]'} text-sm`} />
                       </div>
                     </div>
                   </td>
                   <td className="border-l border-r border-b border-black p-0">
-                    <div className="grid grid-cols-[30px_1fr] items-stretch h-full">
-                      <div className="h-full p-1 flex justify-center">
-                        <span className="text-sm">5/</span>
+                    <div className="grid grid-cols-[30px_1fr] items-center h-full">
+                      <div className="h-full p-1 flex justify-center border-r border-black">
+                        <span className={`text-sm ${darkMode ? 'text-white' : ''}`}>5/</span>
                       </div>
                       <div className="p-1">
-                        <input type="text" value="60/40" className="block w-full rounded-md border-gray-300 bg-[#f7f6f2] text-sm" />
+                        <input type="text" value="60/40" className={`block w-full rounded-md border-gray-300 ${darkMode ? 'bg-gray-800 text-white' : 'bg-[#f7f6f2]'} text-sm`} />
                       </div>
                     </div>
                   </td>
@@ -595,23 +598,23 @@ function App() {
                 {/* 6/ row */}
                 <tr>
                   <td className="border-l border-b border-black p-0">
-                    <div className="grid grid-cols-[30px_1fr] items-stretch h-full">
-                      <div className="h-full p-1 flex justify-center">
-                        <span className="text-sm">6/</span>
+                    <div className="grid grid-cols-[30px_1fr] items-center h-full">
+                      <div className="h-full p-1 flex justify-center border-r border-black">
+                        <span className={`text-sm ${darkMode ? 'text-white' : ''}`}>6/</span>
                       </div>
                       <div className="p-1">
-                        <input type="text" value="N/A" className="block w-full rounded-md border-gray-300 bg-[#f7f6f2] text-sm" />
+                        <input type="text" value="N/A" className={`block w-full rounded-md border-gray-300 ${darkMode ? 'bg-gray-800 text-white' : 'bg-[#f7f6f2]'} text-sm`} />
                       </div>
                     </div>
                   </td>
                   <td className="border-l border-b border-black p-2"></td>
                   <td className="border-l border-r border-b border-black p-0">
-                    <div className="grid grid-cols-[30px_1fr] items-stretch h-full">
-                      <div className="h-full p-1 flex justify-center">
-                        <span className="text-sm">6/</span>
+                    <div className="grid grid-cols-[30px_1fr] items-center h-full">
+                      <div className="h-full p-1 flex justify-center border-r border-black">
+                        <span className={`text-sm ${darkMode ? 'text-white' : ''}`}>6/</span>
                       </div>
                       <div className="p-1">
-                        <input type="text" value="N/A" className="block w-full rounded-md border-gray-300 bg-[#f7f6f2] text-sm" />
+                        <input type="text" value="N/A" className={`block w-full rounded-md border-gray-300 ${darkMode ? 'bg-gray-800 text-white' : 'bg-[#f7f6f2]'} text-sm`} />
                       </div>
                     </div>
                   </td>
