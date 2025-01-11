@@ -266,24 +266,24 @@ function App() {
             <div className="bg-[#f7f6f2] p-2 h-[35vh]">
               <LensVisualizer params={params} updateParam={updateParam} />
             </div>
-              </div>
+          </div>
 
-          <div className="flex flex-col">
-            <table className="w-full border-collapse border border-black">
+          <div className="flex flex-col -ml-[1px]">
+            <table className="w-full border-collapse border-0">
               <thead>
                 <tr>
-                  <th className="border border-black p-1 bg-[#f7f6f2] font-medium text-center">LEFT SURFACE</th>
-                  <th className="border border-black p-1 bg-[#f7f6f2] font-medium text-center">MATERIAL</th>
-                  <th className="border border-black p-1 bg-[#f7f6f2] font-medium text-center">RIGHT SURFACE</th>
+                  <th className="border-t border-l border-b border-black p-1 bg-[#f7f6f2] font-medium text-center text-sm">LEFT SURFACE</th>
+                  <th className="border-t border-l border-b border-black p-1 bg-[#f7f6f2] font-medium text-center text-sm">MATERIAL</th>
+                  <th className="border-t border-l border-r border-b border-black p-1 bg-[#f7f6f2] font-medium text-center text-sm">RIGHT SURFACE</th>
                 </tr>
               </thead>
               <tbody>
                 {/* R (mm) row */}
                 <tr>
-                  <td className="border border-black p-0">
+                  <td className="border-l border-b border-black p-0">
                     <div className="grid grid-cols-[30px_1fr_auto] items-center h-full">
-                      <div className="border-r border-black h-full p-1">
-                        <span className="text-gray-700 text-sm">R (mm)</span>
+                      <div className="h-full p-1 flex justify-center items-center">
+                        <span className="text-sm">R</span>
                       </div>
                       <div className="border-r border-black p-1">
                         <input
@@ -291,16 +291,16 @@ function App() {
                           value={formatRadius(params.radius1, params.type1)}
                           onChange={(e) => updateParam('radius1', parseFloat(e.target.value))}
                           onWheel={(e) => handleWheel(e, 'radius1')}
-                          className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 bg-[#f7f6f2]"
+                          className="block w-full rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 bg-[#f7f6f2] text-sm"
                           disabled={params.type1 === 'PLANO'}
                         />
                       </div>
-                      <div className="p-1">
+                      <div className="p-1 w-[80px] flex justify-center">
                         <select
                           value={params.type1}
                           onChange={(e) => updateParam('type1', e.target.value as 'CX' | 'CV' | 'PLANO')}
                           onWheel={(e) => handleTypeWheel(e, 'type1')}
-                          className="block w-24 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 bg-[#f7f6f2]"
+                          className="appearance-none bg-[#f7f6f2] text-sm text-center w-16 cursor-pointer focus:outline-none border-none py-1"
                         >
                           <option value="CV">CX</option>
                           <option value="CX">CV</option>
@@ -309,27 +309,20 @@ function App() {
                       </div>
                     </div>
                   </td>
-                  <td className="border border-black p-0">
+                  <td className="border-l border-b border-black p-0">
                     <div className="grid grid-cols-[1fr_1fr] items-center h-full">
                       <div className="border-r border-black h-full p-1 flex justify-end">
-                        <span className="text-gray-700 text-sm">GLASS</span>
+                        <span className="text-sm">GLASS</span>
                       </div>
                       <div className="p-1">
-                        <div className="grid grid-cols-[1fr_auto] items-center">
-                          <div className="border-r border-black pr-1">
-                            <input type="text" value={params.glass} className="block w-full rounded-md border-gray-300 bg-[#f7f6f2]" />
-                          </div>
-                          <div className="pl-1">
-                            <span>S-FPL51</span>
-                          </div>
-                        </div>
+                        <input type="text" value={params.glass} className="block w-full rounded-md border-gray-300 bg-[#f7f6f2] text-sm" />
                       </div>
                     </div>
                   </td>
-                  <td className="border border-black p-0">
+                  <td className="border-l border-r border-b border-black p-0">
                     <div className="grid grid-cols-[30px_1fr_auto] items-center h-full">
-                      <div className="border-r border-black h-full p-1">
-                        <span className="text-gray-700 text-sm">R (mm)</span>
+                      <div className="h-full p-1 flex justify-center items-center">
+                        <span className="text-sm">R</span>
                       </div>
                       <div className="border-r border-black p-1">
                         <input
@@ -337,16 +330,16 @@ function App() {
                           value={formatRadius(params.radius2, params.type2)}
                           onChange={(e) => updateParam('radius2', parseFloat(e.target.value))}
                           onWheel={(e) => handleWheel(e, 'radius2')}
-                          className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 bg-[#f7f6f2]"
+                          className="block w-full rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 bg-[#f7f6f2] text-sm"
                           disabled={params.type2 === 'PLANO'}
                         />
                       </div>
-                      <div className="p-1">
+                      <div className="p-1 w-[80px] flex justify-center">
                         <select
                           value={params.type2}
                           onChange={(e) => updateParam('type2', e.target.value as 'CX' | 'CV' | 'PLANO')}
                           onWheel={(e) => handleTypeWheel(e, 'type2')}
-                          className="block w-24 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 bg-[#f7f6f2]"
+                          className="appearance-none bg-[#f7f6f2] text-sm text-center w-16 cursor-pointer focus:outline-none border-none py-1"
                         >
                           <option value="CV">CX</option>
                           <option value="CX">CV</option>
@@ -358,20 +351,20 @@ function App() {
                 </tr>
                 {/* ∅e row */}
                 <tr>
-                  <td className="border border-black p-0">
+                  <td className="border-l border-b border-black p-0">
                     <div className="grid grid-cols-[30px_1fr] items-stretch h-full">
-                      <div className="border-r border-black h-full p-1">
-                        <span className="text-gray-700 text-sm">∅e</span>
+                      <div className="h-full p-1 flex justify-center">
+                        <span className="text-sm">∅e</span>
                       </div>
                       <div className="p-1">
-                        <input type="text" value={`${params.leftDiameter} MIN`} readOnly className="block w-full rounded-md border-gray-300 bg-[#f7f6f2]" />
+                        <input type="text" value={`${params.leftDiameter} MIN`} readOnly className="block w-full rounded-md border-gray-300 bg-[#f7f6f2] text-sm" />
                       </div>
                     </div>
                   </td>
-                  <td className="border border-black p-0">
+                  <td className="border-l border-b border-black p-0">
                     <div className="grid grid-cols-[1fr_1fr] items-center h-full">
                       <div className="border-r border-black h-full p-1 flex justify-end">
-                        <span className="text-gray-700 text-sm">Nd</span>
+                        <span className="text-sm">Nd</span>
                       </div>
                       <div className="p-1">
                         <div className="grid grid-cols-[1fr_auto] items-center">
@@ -385,36 +378,42 @@ function App() {
                       </div>
                     </div>
                   </td>
-                  <td className="border border-black p-0">
+                  <td className="border-l border-r border-b border-black p-0">
                     <div className="grid grid-cols-[30px_1fr] items-stretch h-full">
-                      <div className="border-r border-black h-full p-1">
-                        <span className="text-gray-700 text-sm">∅e</span>
+                      <div className="h-full p-1 flex justify-center">
+                        <span className="text-sm">∅e</span>
                       </div>
                       <div className="p-1">
-                        <input type="text" value={`${params.rightDiameter} MIN`} readOnly className="block w-full rounded-md border-gray-300 bg-[#f7f6f2]" />
+                        <input type="text" value={`${params.rightDiameter} MIN`} readOnly className="block w-full rounded-md border-gray-300 bg-[#f7f6f2] text-sm" />
                       </div>
                     </div>
                   </td>
                 </tr>
                 {/* PROT. CHAMFER row */}
                 <tr>
-                  <td className="border border-black p-0">
-                    <div className="grid grid-cols-[30px_1fr] items-center h-full">
-                      <div className="border-r border-black h-full p-1">
-                        <span className="text-gray-700 text-sm whitespace-nowrap">PROT.</span>
-                      </div>
-                      <div className="p-1">
-                        <div className="flex items-center gap-2">
-                          <span className="text-gray-700 text-sm">CHAMFER</span>
-                          <input type="text" value={params.leftChamfer} className="w-16 rounded-md border-gray-300 bg-[#f7f6f2]" />
-                        </div>
-                      </div>
-                    </div>
+                  <td className="border-l border-b border-black p-0">
+                    <table className="w-full h-full border-collapse">
+                      <tr>
+                        <td className="w-[30px]">
+                          <span className="text-sm whitespace-nowrap">&nbsp;</span>
+                        </td>
+                        <td className="border-r border-black">
+                          <div className="flex items-center justify-end h-full">
+                            <span className="text-sm pr-2">PROT. CHAMFER</span>
+                          </div>
+                        </td>
+                        <td className="w-[80px]">
+                          <div className="flex items-center justify-center h-full">
+                            <input type="text" value="0.1-0.3" className="w-16 rounded-md border-gray-300 bg-[#f7f6f2] text-sm text-center" />
+                          </div>
+                        </td>
+                      </tr>
+                    </table>
                   </td>
-                  <td className="border border-black p-0">
+                  <td className="border-l border-b border-black p-0">
                     <div className="grid grid-cols-[1fr_1fr] items-center h-full">
                       <div className="border-r border-black h-full p-1 flex justify-end">
-                        <span className="text-gray-700 text-sm">Vd</span>
+                        <span className="text-sm">Vd</span>
                       </div>
                       <div className="p-1">
                         <div className="grid grid-cols-[1fr_auto] items-center">
@@ -428,74 +427,80 @@ function App() {
                       </div>
                     </div>
                   </td>
-                  <td className="border border-black p-0">
-                    <div className="grid grid-cols-[30px_1fr] items-center h-full">
-                      <div className="border-r border-black h-full p-1">
-                        <span className="text-gray-700 text-sm whitespace-nowrap">PROT.</span>
-                      </div>
-                      <div className="p-1">
-                        <div className="flex items-center gap-2">
-                          <span className="text-gray-700 text-sm">CHAMFER</span>
-                          <input type="text" value={params.rightChamfer} className="w-16 rounded-md border-gray-300 bg-[#f7f6f2]" />
-                        </div>
-                      </div>
-                    </div>
+                  <td className="border-l border-r border-b border-black p-0">
+                    <table className="w-full h-full border-collapse">
+                      <tr>
+                        <td className="w-[30px]">
+                          <span className="text-sm whitespace-nowrap">&nbsp;</span>
+                        </td>
+                        <td className="border-r border-black">
+                          <div className="flex items-center justify-end h-full">
+                            <span className="text-sm pr-2">PROT. CHAMFER</span>
+                          </div>
+                        </td>
+                        <td className="w-[80px]">
+                          <div className="flex items-center justify-center h-full">
+                            <input type="text" value="0.1-0.3" className="w-16 rounded-md border-gray-300 bg-[#f7f6f2] text-sm text-center" />
+                          </div>
+                        </td>
+                      </tr>
+                    </table>
                   </td>
                 </tr>
                 {/* λ row */}
                 <tr>
-                  <td className="border border-black p-0">
+                  <td className="border-l border-b border-black p-0">
                     <div className="grid grid-cols-[30px_1fr] items-center h-full">
-                      <div className="border-r border-black h-full p-1">
-                        <span className="text-gray-700 text-sm">
+                      <div className="h-full p-1 flex justify-center">
+                        <span className="text-sm">
                           <span className="inline-block w-5 h-5 border border-gray-700 rounded-full text-center leading-4 -ml-1">λ</span>
                         </span>
                       </div>
                       <div className="p-1">
-                        <input type="text" value={params.leftWavelength} className="block w-full rounded-md border-gray-300 bg-[#f7f6f2]" />
+                        <input type="text" value={params.leftWavelength} className="block w-full rounded-md border-gray-300 bg-[#f7f6f2] text-sm" />
                       </div>
                     </div>
                   </td>
-                  <td className="border border-black p-0">
+                  <td className="border-l border-b border-black p-0">
                     <div className="grid grid-cols-[1fr_1fr] items-center h-full">
                       <div className="border-r border-black h-full p-1 flex justify-end">
-                        <span className="text-gray-700 text-sm">&nbsp;</span>
+                        <span className="text-sm">&nbsp;</span>
                       </div>
                       <div className="p-1">
                         <div className="block w-full h-6"></div>
                       </div>
                     </div>
                   </td>
-                  <td className="border border-black p-0">
+                  <td className="border-l border-r border-b border-black p-0">
                     <div className="grid grid-cols-[30px_1fr] items-center h-full">
-                      <div className="border-r border-black h-full p-1">
-                        <span className="text-gray-700 text-sm">
+                      <div className="h-full p-1 flex justify-center">
+                        <span className="text-sm">
                           <span className="inline-block w-5 h-5 border border-gray-700 rounded-full text-center leading-4 -ml-1">λ</span>
                         </span>
                       </div>
                       <div className="p-1">
-                        <input type="text" value={params.rightWavelength} className="block w-full rounded-md border-gray-300 bg-[#f7f6f2]" />
+                        <input type="text" value={params.rightWavelength} className="block w-full rounded-md border-gray-300 bg-[#f7f6f2] text-sm" />
                       </div>
                     </div>
                   </td>
                 </tr>
                 {/* 3/ row */}
                 <tr>
-                  <td className="border border-black p-0">
+                  <td className="border-l border-b border-black p-0">
                     <div className="grid grid-cols-[30px_1fr] items-stretch h-full">
-                      <div className="border-r border-black h-full p-1">
-                        <span className="text-gray-700 text-sm">3/</span>
+                      <div className="h-full p-1 flex justify-center">
+                        <span className="text-sm">3/</span>
                       </div>
                       <div className="p-1 space-y-1">
-                        <input type="text" value="AR @0.500-0.600µm" className="block w-full rounded-md border-gray-300 bg-[#f7f6f2]" />
-                        <input type="text" value="BBAR AVG T < 99.7%" className="block w-full rounded-md border-gray-300 bg-[#f7f6f2]" />
+                        <input type="text" value="AR @0.500-0.600µm" className="block w-full rounded-md border-gray-300 bg-[#f7f6f2] text-sm" />
+                        <input type="text" value="BBAR AVG T < 99.7%" className="block w-full rounded-md border-gray-300 bg-[#f7f6f2] text-sm" />
                       </div>
                     </div>
                   </td>
-                  <td className="border border-black p-0">
+                  <td className="border-l border-b border-black p-0">
                     <div className="grid grid-cols-[1fr_1fr] items-center h-full">
                       <div className="border-r border-black h-full p-1 flex justify-end">
-                        <span className="text-gray-700 text-sm">0/</span>
+                        <span className="text-sm">0/</span>
                       </div>
                       <div className="p-1">
                         <div className="grid grid-cols-[1fr_auto] items-center">
@@ -509,104 +514,104 @@ function App() {
                       </div>
                     </div>
                   </td>
-                  <td className="border border-black p-0">
+                  <td className="border-l border-r border-b border-black p-0">
                     <div className="grid grid-cols-[30px_1fr] items-stretch h-full">
-                      <div className="border-r border-black h-full p-1">
-                        <span className="text-gray-700 text-sm">3/</span>
+                      <div className="h-full p-1 flex justify-center">
+                        <span className="text-sm">3/</span>
                       </div>
                       <div className="p-1 space-y-1">
-                        <input type="text" value="AR @0.500-0.600µm" className="block w-full rounded-md border-gray-300 bg-[#f7f6f2]" />
-                        <input type="text" value="BBAR AVG T < 99.7%" className="block w-full rounded-md border-gray-300 bg-[#f7f6f2]" />
+                        <input type="text" value="AR @0.500-0.600µm" className="block w-full rounded-md border-gray-300 bg-[#f7f6f2] text-sm" />
+                        <input type="text" value="BBAR AVG T < 99.7%" className="block w-full rounded-md border-gray-300 bg-[#f7f6f2] text-sm" />
                       </div>
                     </div>
                   </td>
                 </tr>
                 {/* 4/ row */}
                 <tr>
-                  <td className="border border-black p-0">
+                  <td className="border-l border-b border-black p-0">
                     <div className="grid grid-cols-[30px_1fr] items-stretch h-full">
-                      <div className="border-r border-black h-full p-1">
-                        <span className="text-gray-700 text-sm">4/</span>
+                      <div className="h-full p-1 flex justify-center">
+                        <span className="text-sm">4/</span>
                       </div>
                       <div className="p-1">
-                        <input type="text" value={params.leftBevel} className="block w-full rounded-md border-gray-300 bg-[#f7f6f2]" />
+                        <input type="text" value={params.leftBevel} className="block w-full rounded-md border-gray-300 bg-[#f7f6f2] text-sm" />
                       </div>
                     </div>
                   </td>
-                  <td className="border border-black p-0">
+                  <td className="border-l border-b border-black p-0">
                     <div className="grid grid-cols-[1fr_1fr] items-center h-full">
                       <div className="border-r border-black h-full p-1 flex justify-end">
-                        <span className="text-gray-700 text-sm">1/</span>
+                        <span className="text-sm">1/</span>
                       </div>
                       <div className="p-1">
-                        <input type="text" value={params.inclusions} className="block w-full rounded-md border-gray-300 bg-[#f7f6f2]" />
+                        <input type="text" value={params.inclusions} className="block w-full rounded-md border-gray-300 bg-[#f7f6f2] text-sm" />
                       </div>
                     </div>
                   </td>
-                  <td className="border border-black p-0">
+                  <td className="border-l border-r border-b border-black p-0">
                     <div className="grid grid-cols-[30px_1fr] items-stretch h-full">
-                      <div className="border-r border-black h-full p-1">
-                        <span className="text-gray-700 text-sm">4/</span>
+                      <div className="h-full p-1 flex justify-center">
+                        <span className="text-sm">4/</span>
                       </div>
                       <div className="p-1">
-                        <input type="text" value={params.rightBevel} className="block w-full rounded-md border-gray-300 bg-[#f7f6f2]" />
+                        <input type="text" value={params.rightBevel} className="block w-full rounded-md border-gray-300 bg-[#f7f6f2] text-sm" />
                       </div>
                     </div>
                   </td>
                 </tr>
                 {/* 5/ row */}
                 <tr>
-                  <td className="border border-black p-0">
+                  <td className="border-l border-b border-black p-0">
                     <div className="grid grid-cols-[30px_1fr] items-stretch h-full">
-                      <div className="border-r border-black h-full p-1">
-                        <span className="text-gray-700 text-sm">5/</span>
+                      <div className="h-full p-1 flex justify-center">
+                        <span className="text-sm">5/</span>
                       </div>
                       <div className="p-1">
-                        <input type="text" value="60/40" className="block w-full rounded-md border-gray-300 bg-[#f7f6f2]" />
+                        <input type="text" value="60/40" className="block w-full rounded-md border-gray-300 bg-[#f7f6f2] text-sm" />
                       </div>
                     </div>
                   </td>
-                  <td className="border border-black p-0">
+                  <td className="border-l border-b border-black p-0">
                     <div className="grid grid-cols-[1fr_1fr] items-center h-full">
                       <div className="border-r border-black h-full p-1 flex justify-end">
-                        <span className="text-gray-700 text-sm">2/</span>
+                        <span className="text-sm">2/</span>
                       </div>
                       <div className="p-1">
-                        <input type="text" value={params.stress} className="block w-full rounded-md border-gray-300 bg-[#f7f6f2]" />
+                        <input type="text" value={params.stress} className="block w-full rounded-md border-gray-300 bg-[#f7f6f2] text-sm" />
                       </div>
                     </div>
                   </td>
-                  <td className="border border-black p-0">
+                  <td className="border-l border-r border-b border-black p-0">
                     <div className="grid grid-cols-[30px_1fr] items-stretch h-full">
-                      <div className="border-r border-black h-full p-1">
-                        <span className="text-gray-700 text-sm">5/</span>
+                      <div className="h-full p-1 flex justify-center">
+                        <span className="text-sm">5/</span>
                       </div>
                       <div className="p-1">
-                        <input type="text" value="60/40" className="block w-full rounded-md border-gray-300 bg-[#f7f6f2]" />
+                        <input type="text" value="60/40" className="block w-full rounded-md border-gray-300 bg-[#f7f6f2] text-sm" />
                       </div>
                     </div>
                   </td>
                 </tr>
                 {/* 6/ row */}
                 <tr>
-                  <td className="border border-black p-0">
+                  <td className="border-l border-b border-black p-0">
                     <div className="grid grid-cols-[30px_1fr] items-stretch h-full">
-                      <div className="border-r border-black h-full p-1">
-                        <span className="text-gray-700 text-sm">6/</span>
+                      <div className="h-full p-1 flex justify-center">
+                        <span className="text-sm">6/</span>
                       </div>
                       <div className="p-1">
-                        <input type="text" value="N/A" className="block w-full rounded-md border-gray-300 bg-[#f7f6f2]" />
+                        <input type="text" value="N/A" className="block w-full rounded-md border-gray-300 bg-[#f7f6f2] text-sm" />
                       </div>
                     </div>
                   </td>
-                  <td className="border border-black p-2"></td>
-                  <td className="border border-black p-0">
+                  <td className="border-l border-b border-black p-2"></td>
+                  <td className="border-l border-r border-b border-black p-0">
                     <div className="grid grid-cols-[30px_1fr] items-stretch h-full">
-                      <div className="border-r border-black h-full p-1">
-                        <span className="text-gray-700 text-sm">6/</span>
+                      <div className="h-full p-1 flex justify-center">
+                        <span className="text-sm">6/</span>
                       </div>
                       <div className="p-1">
-                        <input type="text" value="N/A" className="block w-full rounded-md border-gray-300 bg-[#f7f6f2]" />
+                        <input type="text" value="N/A" className="block w-full rounded-md border-gray-300 bg-[#f7f6f2] text-sm" />
                       </div>
                     </div>
                   </td>
