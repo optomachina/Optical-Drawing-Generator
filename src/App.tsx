@@ -405,31 +405,31 @@ function App() {
                   </td>
                 </tr>
                 {/* PROT. CHAMFER row */}
-                <tr>
+                <tr className="h-[36px]">
                   <td className="border-l border-b border-black p-0">
-                    <div className="grid grid-cols-[30px_1fr_auto] items-center h-full">
-                      <div className="h-full p-1 flex justify-center">
+                    <div className="grid grid-cols-[30px_1fr_auto] h-[36px]">
+                      <div className="h-[36px] p-1 flex justify-center">
                         <span className={`text-sm ${darkMode ? 'text-white' : ''}`}>&nbsp;</span>
                       </div>
-                      <div className="border-r border-black p-1">
+                      <div className="h-[36px] border-r border-black p-1 flex items-center">
                         <span className={`text-sm pr-2 ${darkMode ? 'text-white' : ''}`}>PROT. CHAMFER</span>
                       </div>
-                      <div className="p-1 w-[80px] flex justify-center">
+                      <div className="h-[36px] p-1 w-[80px] flex items-center justify-center">
                         <input type="text" value="0.1-0.3" className={`w-16 text-center ${darkMode ? 'bg-gray-800 text-white' : 'bg-[#f7f6f2]'} text-sm`} />
                       </div>
                     </div>
                   </td>
                   <td className="border-l border-b border-black p-0">
-                    <div className="grid grid-cols-[1fr_1fr] items-center h-full">
-                      <div className="border-r border-black h-full p-1 flex items-center justify-end">
+                    <div className="grid grid-cols-[1fr_1fr] h-[36px]">
+                      <div className="h-[36px] border-r border-black p-1 flex items-center justify-end">
                         <span className={`text-sm ${darkMode ? 'text-white' : ''}`}>Vd</span>
                       </div>
-                      <div className="p-1 flex items-center">
-                        <div className="grid grid-cols-[1fr_auto] items-center h-full w-full">
-                          <div className="border-r border-black h-full p-1 flex items-center justify-end">
+                      <div className="h-[36px] p-1 flex items-center">
+                        <div className="grid grid-cols-[1fr_auto] h-[36px] w-full">
+                          <div className="h-[36px] border-r border-black p-1 flex items-center justify-end">
                             <span className={darkMode ? 'text-white' : ''}>±</span>
                           </div>
-                          <div className="p-1 flex items-center">
+                          <div className="h-[36px] p-1 flex items-center">
                             <span className={darkMode ? 'text-white' : ''}>0.5</span>
                           </div>
                         </div>
@@ -437,14 +437,14 @@ function App() {
                     </div>
                   </td>
                   <td className="border-l border-r border-b border-black p-0">
-                    <div className="grid grid-cols-[30px_1fr_auto] items-center h-full">
-                      <div className="h-full p-1 flex justify-center">
+                    <div className="grid grid-cols-[30px_1fr_auto] h-[36px]">
+                      <div className="h-[36px] p-1 flex justify-center">
                         <span className={`text-sm ${darkMode ? 'text-white' : ''}`}>&nbsp;</span>
                       </div>
-                      <div className="border-r border-black p-1">
+                      <div className="h-[36px] border-r border-black p-1 flex items-center">
                         <span className={`text-sm pr-2 ${darkMode ? 'text-white' : ''}`}>PROT. CHAMFER</span>
                       </div>
-                      <div className="p-1 w-[80px] flex justify-center">
+                      <div className="h-[36px] p-1 w-[80px] flex items-center justify-center">
                         <input type="text" value="0.1-0.3" className={`w-16 text-center ${darkMode ? 'bg-gray-800 text-white' : 'bg-[#f7f6f2]'} text-sm`} />
                       </div>
                     </div>
