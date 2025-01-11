@@ -1,0 +1,10 @@
+# Cursor Rules
+
+## Version Control
+- Do not commit or push without explicitly being instructed to 
+
+## PowerShell Command Formatting
+- When using PowerShell, avoid piping to `cat` as it causes cursor position errors
+- For git commands that need output formatting, use native git output instead
+- Keep commands simple and direct without unnecessary pipes
+- Always use ; instead of && for multiple commands in powershell 

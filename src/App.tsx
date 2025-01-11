@@ -326,13 +326,13 @@ function App() {
                   </td>
                   <td className="border-l border-b border-black p-0">
                     <div className="grid grid-cols-[1fr_1fr] items-center h-full">
-                      <div className="border-r border-black h-full p-1 flex justify-end">
+                      <div className="border-r border-black h-full p-1 flex items-center justify-end">
                         <span className={`text-sm ${darkMode ? 'text-white' : ''}`}>GLASS</span>
-                </div>
-                      <div className="p-1">
+                      </div>
+                      <div className="p-1 flex items-center">
                         <input type="text" value={params.glass} className={`block w-full rounded-md border-gray-300 ${darkMode ? 'bg-gray-800 text-white' : 'bg-[#f7f6f2]'} text-sm`} />
-                  </div>
-                </div>
+                      </div>
+                    </div>
                   </td>
                   <td className="border-l border-r border-b border-black p-0">
                     <div className="grid grid-cols-[30px_1fr_auto] items-center h-full">
@@ -377,16 +377,16 @@ function App() {
                     </div>
                   </td>
                   <td className="border-l border-b border-black p-0">
-                    <div className="grid grid-cols-[1fr_1fr] items-center h-full">
-                      <div className="border-r border-black h-full p-1 flex justify-end">
+                    <div className="grid grid-cols-[1fr_1fr] h-[36px]">
+                      <div className="h-[36px] p-1 flex items-center justify-end border-r border-black">
                         <span className={`text-sm ${darkMode ? 'text-white' : ''}`}>Nd</span>
                       </div>
-                      <div className="p-1">
-                        <div className="grid grid-cols-[1fr_auto] h-full">
-                          <div className="border-r border-black h-full p-1 flex items-center justify-end">
+                      <div className="h-[36px] p-1 flex items-center">
+                        <div className="grid grid-cols-[1fr_auto] h-[36px] w-full">
+                          <div className="h-[36px] p-1 flex items-center justify-end border-r border-black">
                             <span className={darkMode ? 'text-white' : ''}>±</span>
                           </div>
-                          <div className="p-1 flex items-center">
+                          <div className="h-[36px] p-1 flex items-center">
                             <span className={darkMode ? 'text-white' : ''}>0.0005</span>
                           </div>
                         </div>
@@ -421,15 +421,15 @@ function App() {
                   </td>
                   <td className="border-l border-b border-black p-0">
                     <div className="grid grid-cols-[1fr_1fr] items-center h-full">
-                      <div className="border-r border-black h-full p-1 flex justify-end">
+                      <div className="border-r border-black h-full p-1 flex items-center justify-end">
                         <span className={`text-sm ${darkMode ? 'text-white' : ''}`}>Vd</span>
                       </div>
-                      <div className="p-1">
-                        <div className="grid grid-cols-[1fr_auto] items-center">
-                          <div className="border-r border-black pr-1">
+                      <div className="p-1 flex items-center">
+                        <div className="grid grid-cols-[1fr_auto] items-center h-full w-full">
+                          <div className="border-r border-black h-full p-1 flex items-center justify-end">
                             <span className={darkMode ? 'text-white' : ''}>±</span>
                           </div>
-                          <div className="pl-1">
+                          <div className="p-1 flex items-center">
                             <span className={darkMode ? 'text-white' : ''}>0.5</span>
                           </div>
                         </div>
@@ -502,11 +502,11 @@ function App() {
                   </td>
                   <td className="border-l border-b border-black p-0">
                     <div className="grid grid-cols-[1fr_1fr] items-center h-full">
-                      <div className="border-r border-black h-full p-1 flex justify-end">
+                      <div className="border-r border-black h-full p-1 flex items-center justify-end">
                         <span className={`text-sm ${darkMode ? 'text-white' : ''}`}>0/</span>
                       </div>
-                      <div className="p-1">
-                        <div className="grid grid-cols-[1fr_auto] h-full">
+                      <div className="p-1 flex items-center">
+                        <div className="grid grid-cols-[1fr_auto] items-center h-full w-full">
                           <div className="border-r border-black h-full p-1 flex items-center justify-end">
                             <span className={darkMode ? 'text-white' : ''}></span>
                           </div>
