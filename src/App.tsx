@@ -79,7 +79,7 @@ function App() {
                       REVISIONS
                     </th>
                   </tr>
-                  <tr>
+                  <tr className="border-b border-black">
                     <th className="revision-cell text-center text-[8px] font-['Century_Gothic'] whitespace-nowrap py-0.5 px-1">
                       REV.
                     </th>
