@@ -24,6 +24,7 @@ const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
   const [suggestions, setSuggestions] = useState<GlassType[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const [allGlassTypes, setAllGlassTypes] = useState<GlassType[]>([]);
 
   useEffect(() => {
     setInputValue(value.toUpperCase());
@@ -39,6 +40,19 @@ const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  // Load all glass types on mount
+  useEffect(() => {
+    const loadAllTypes = async () => {
+      try {
+        const results = await onSearch('');
+        setAllGlassTypes(results.sort((a, b) => a.name.localeCompare(b.name)));
+      } catch (error) {
+        console.error('Error loading glass types:', error);
+      }
+    };
+    loadAllTypes();
+  }, [onSearch]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'ArrowDown') {
@@ -77,6 +91,34 @@ const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
     }
   };
 
+  const handleWheel = async (e: React.WheelEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    try {
+      // Get all glass types if we haven't loaded them yet
+      if (allGlassTypes.length === 0) {
+        const types = await onSearch('');
+        setAllGlassTypes(types);
+      }
+      
+      if (allGlassTypes.length > 0) {
+        const currentIndex = allGlassTypes.findIndex(type => type.name.toUpperCase() === inputValue.toUpperCase());
+        const delta = e.deltaY > 0 ? -1 : 1; // Reversed direction to match natural scrolling
+        const newIndex = currentIndex === -1 
+          ? (delta > 0 ? 0 : allGlassTypes.length - 1)
+          : (currentIndex + delta + allGlassTypes.length) % allGlassTypes.length;
+        
+        const newValue = allGlassTypes[newIndex].name.toUpperCase();
+        setInputValue(newValue);
+        onChange(newValue);
+        setIsOpen(false); // Close the dropdown when scrolling
+      }
+    } catch (error) {
+      console.error('Error handling wheel event:', error);
+    }
+  };
+
   return (
     <div ref={wrapperRef} className="relative">
       <input
@@ -85,11 +127,12 @@ const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
         onChange={handleInputChange}
         onFocus={() => setIsOpen(true)}
         onKeyDown={handleKeyDown}
+        onWheel={handleWheel}
         placeholder={placeholder?.toUpperCase()}
         style={{ textTransform: 'uppercase' }}
         className={`block w-full rounded-md border-gray-300 ${
           darkMode ? 'bg-gray-800 text-white' : 'bg-[#f7f6f2]'
-        } text-sm ${className}`}
+        } text-sm cursor-ns-resize ${className}`}
       />
       {isOpen && (isLoading || suggestions.length > 0) && (
         <ul className={`absolute z-10 w-full mt-1 max-h-60 overflow-auto rounded-md border ${

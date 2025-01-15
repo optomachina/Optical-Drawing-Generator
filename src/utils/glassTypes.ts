@@ -10,6 +10,7 @@ let cachedGlassTypes: GlassType[] | null = null;
 export async function loadGlassTypes(): Promise<GlassType[]> {
   // Return cached results if available
   if (cachedGlassTypes) {
+    console.log('Returning cached glass types:', cachedGlassTypes.length);
     return cachedGlassTypes;
   }
 
@@ -17,23 +18,23 @@ export async function loadGlassTypes(): Promise<GlassType[]> {
     // Fetch the CSV file
     const response = await fetch(glassTypesUrl);
     const data = await response.text();
-    console.log('Fetched CSV data:', data.substring(0, 100));
+    console.log('Raw CSV data:', data);
 
     // Split into lines and filter out empty lines
     const lines = data.split('\n').filter(line => line.trim() !== '');
-    console.log('First 5 lines:', lines.slice(0, 5));
+    console.log('Number of lines:', lines.length);
     
     // Skip the header row and extract only the glass names from the first column
     cachedGlassTypes = lines
       .slice(1) // Skip header row
       .map(line => {
-        const columns = line.split(',');
-        const name = columns[0].trim();
+        const name = line.split(',')[0].trim();
         return { name };
       })
-      .filter(type => type.name !== ''); // Filter out any empty names
+      .filter(type => type.name !== '') // Filter out any empty names
+      .sort((a, b) => a.name.localeCompare(b.name)); // Sort alphabetically
     
-    console.log('Final glass types:', cachedGlassTypes);
+    console.log('Loaded glass types:', cachedGlassTypes);
     return cachedGlassTypes;
   } catch (error) {
     console.error('Error loading glass types:', error);
@@ -42,17 +43,18 @@ export async function loadGlassTypes(): Promise<GlassType[]> {
 }
 
 export async function findMatchingGlassTypes(query: string): Promise<GlassType[]> {
+  // If query is empty, return all glass types
+  const glassTypes = await loadGlassTypes();
+  
   if (!query.trim()) {
-    return [];
+    return glassTypes;
   }
 
-  const glassTypes = await loadGlassTypes();
   const normalizedQuery = query.toLowerCase().trim();
-  
   const matches = glassTypes.filter(type => 
     type.name.toLowerCase().includes(normalizedQuery)
   );
   
-  console.log(`Search query: "${normalizedQuery}" found ${matches.length} matches:`, matches);
+  console.log(`Search query: "${normalizedQuery}" found ${matches.length} matches`);
   return matches.slice(0, 10);
 } 
