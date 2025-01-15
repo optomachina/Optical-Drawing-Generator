@@ -7,4 +7,11 @@ export default defineConfig({
   optimizeDeps: {
     exclude: ['lucide-react'],
   },
+  // Configure CSV files to be loaded as raw text
+  assetsInclude: [],
+  build: {
+    rollupOptions: {
+      plugins: []
+    }
+  }
 });
