@@ -79,6 +79,9 @@ export function adjustLensParameters(
   } else if (updatedParam === 'rightDiameter') {
     newParams.rightDiameter = Number(newValue);
     newParams.rightDiameterManuallySet = true;
+  } else if (updatedParam === 'nd' || updatedParam === 'vd') {
+    // Handle tolerance parameters as strings
+    newParams[updatedParam] = String(newValue);
   } else {
     // For all other parameters, just update the value directly
     newParams[updatedParam] = Number(newValue) || newParams[updatedParam];
