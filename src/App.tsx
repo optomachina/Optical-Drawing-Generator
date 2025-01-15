@@ -3,6 +3,8 @@ import { Ruler } from 'lucide-react';
 import LensVisualizer from './components/LensVisualizer';
 import { useLensParameters } from './hooks/useLensParameters';
 import { formatRadius } from './utils/lensCalculations';
+import { findMatchingGlassTypes } from './utils/glassTypes';
+import AutocompleteInput from './components/AutocompleteInput';
 
 function App() {
   const { params, updateParam } = useLensParameters();
@@ -167,7 +169,13 @@ function App() {
                         <span className={`text-sm ${darkMode ? 'text-white' : ''}`}>GLASS</span>
                       </div>
                       <div className="p-1 flex items-center">
-                        <input type="text" value={params.glass} className={`block w-full rounded-md border-gray-300 ${darkMode ? 'bg-gray-800 text-white' : 'bg-[#f7f6f2]'} text-sm`} />
+                        <AutocompleteInput
+                          value={params.glass}
+                          onChange={(value) => updateParam('glass', value)}
+                          onSearch={findMatchingGlassTypes}
+                          placeholder="Type to search..."
+                          darkMode={darkMode}
+                        />
                       </div>
                     </div>
                   </td>
