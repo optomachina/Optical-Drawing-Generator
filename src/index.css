@@ -25,81 +25,6 @@
   @apply outline-none ring-2 ring-indigo-500 border-indigo-500;
 }
 
-/* Revision table resizing styles */
-.resize-table {
-  border-collapse: collapse;
-  table-layout: fixed;
-  width: 100%;
-  margin: 0;
-  padding: 0;
-}
-
-.resize-table th {
-  width: 33.333%;
-  padding: 4px;
-  margin: 0;
-  border: 1px solid black;
-}
-
-.resize-table td {
-  padding: 4px;
-  margin: 0;
-  border: 1px solid black;
-}
-
-.resize-handle,
-.resize-handle-vertical {
-  opacity: 0;
-  transition: opacity 0.2s;
-  z-index: 1;
-}
-
-/* Horizontal resize handles */
-th .resize-handle,
-td .resize-handle {
-  position: absolute;
-  bottom: -2px;
-  left: -1px;
-  right: -1px;
-  height: 4px;
-  cursor: row-resize;
-}
-
-/* Vertical resize handles */
-.resize-handle-vertical {
-  position: absolute;
-  top: -1px;
-  left: -2px;
-  width: 4px;
-  height: calc(100% + 2px);
-  cursor: col-resize;
-  z-index: 2;
-}
-
-/* Corner resize handle */
-.corner-resize-handle {
-  position: absolute;
-  bottom: -6px;
-  left: -6px;
-  width: 12px;
-  height: 12px;
-  cursor: nw-resize;
-  z-index: 3;
-}
-
-/* Ensure cells don't expand beyond their content */
-.resize-table th,
-.resize-table td {
-  max-width: none;
-  overflow: visible;
-  position: relative;
-}
-
-/* Prevent text selection during resize */
-.resize-table.resizing {
-  user-select: none;
-}
-
 .revision-border, .parameter-section {
   border: 1px solid black;
   width: 100%;
@@ -107,14 +32,35 @@ td .resize-handle {
   padding: 0;
 }
 
-.revision-cell, .parameter-cell {
-  padding: 4px;
+.revision-cell {
+  margin: 0;
+  border-right: 1px solid black;
+  border-bottom: 1px solid black;
+}
+
+.revision-cell:first-child {
+  border-left: none;
+}
+
+tr:first-child .revision-cell {
+  border-top: none;
+}
+
+tr:last-child .revision-cell {
+  border-bottom: none;
+}
+
+td:last-child .revision-cell,
+th:last-child.revision-cell {
+  border-right: none;
+}
+
+.parameter-cell {
   margin: 0;
   border: 1px solid black;
 }
 
 /* Remove borders that would overlap with container */
-tr:last-child .revision-cell,
 tr:last-child .parameter-cell {
   border-bottom: none;
 }
