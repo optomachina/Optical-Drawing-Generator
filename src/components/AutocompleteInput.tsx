@@ -63,10 +63,21 @@ const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
     } else if (e.key === 'ArrowUp') {
       e.preventDefault();
       setHighlightedIndex(prev => prev > 0 ? prev - 1 : -1);
-    } else if (e.key === 'Enter' && highlightedIndex >= 0) {
+    } else if (e.key === 'Enter') {
       e.preventDefault();
-      onChange(suggestions[highlightedIndex].name.toUpperCase());
-      setIsOpen(false);
+      if (highlightedIndex >= 0) {
+        // If a suggestion is highlighted, use that
+        onChange(suggestions[highlightedIndex].name.toUpperCase());
+        setIsOpen(false);
+      } else {
+        // Otherwise, confirm the current input value
+        const currentValue = inputValue.toUpperCase();
+        const matchingType = allGlassTypes.find(type => type.name.toUpperCase() === currentValue);
+        if (matchingType) {
+          onChange(matchingType.name.toUpperCase());
+          setIsOpen(false);
+        }
+      }
     } else if (e.key === 'Escape') {
       setIsOpen(false);
     }
@@ -91,6 +102,21 @@ const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
     }
   };
 
+  const handleClick = async () => {
+    if (!isOpen) {
+      try {
+        setIsLoading(true);
+        const results = await onSearch('');
+        setSuggestions(results);
+        setIsOpen(true);
+      } catch (error) {
+        console.error('Error loading suggestions:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+  };
+
   const handleWheel = async (e: React.WheelEvent<HTMLInputElement>) => {
     e.preventDefault();
     e.stopPropagation();
@@ -112,7 +138,6 @@ const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
         const newValue = allGlassTypes[newIndex].name.toUpperCase();
         setInputValue(newValue);
         onChange(newValue);
-        setIsOpen(false); // Close the dropdown when scrolling
       }
     } catch (error) {
       console.error('Error handling wheel event:', error);
@@ -125,7 +150,7 @@ const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
         type="text"
         value={inputValue}
         onChange={handleInputChange}
-        onFocus={() => setIsOpen(true)}
+        onClick={handleClick}
         onKeyDown={handleKeyDown}
         onWheel={handleWheel}
         placeholder={placeholder?.toUpperCase()}
