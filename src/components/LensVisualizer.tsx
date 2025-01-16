@@ -108,10 +108,10 @@ const LensVisualizer: React.FC<LensVisualizerProps> = ({ params, updateParam, da
           <marker
             id="arrow"
             viewBox="0 0 10 10"
-            refX="5"
+            refX="10"
             refY="5"
-            markerWidth="4"
-            markerHeight="4"
+            markerWidth="6"
+            markerHeight="6"
             orient="auto-start-reverse"
           >
             <path d="M 0 0 L 10 5 L 0 10 z" fill={darkMode ? '#ffffff' : '#000000'} />
@@ -158,7 +158,6 @@ const LensVisualizer: React.FC<LensVisualizerProps> = ({ params, updateParam, da
           y2={vertexDimensionY}
           stroke={darkMode ? '#ffffff' : '#000000'}
           strokeWidth="1"
-          strokeDasharray="2,2"
         />
         <line
           x1={vertex2.x || x2}
@@ -167,7 +166,6 @@ const LensVisualizer: React.FC<LensVisualizerProps> = ({ params, updateParam, da
           y2={vertexDimensionY}
           stroke={darkMode ? '#ffffff' : '#000000'}
           strokeWidth="1"
-          strokeDasharray="2,2"
         />
         <line
           x1={vertex1.x || x1}
@@ -180,7 +178,7 @@ const LensVisualizer: React.FC<LensVisualizerProps> = ({ params, updateParam, da
           markerStart="url(#arrow)"
         />
         <foreignObject
-          x={centerX - 60}
+          x={(vertex1.x + vertex2.x) / 2 - 55}
           y={vertexDimensionY - 25}
           width="120"
           height="30"
