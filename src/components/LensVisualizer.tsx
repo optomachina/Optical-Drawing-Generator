@@ -213,7 +213,7 @@ const LensVisualizer: React.FC<LensVisualizerProps> = ({ params, updateParam, da
         <line
           x1={x2}
           y1={centerY - halfDiameter}
-          x2={x2 + padding + 3}
+          x2={x2 + padding + 10}
           y2={centerY - halfDiameter}
           stroke={darkMode ? '#ffffff' : '#000000'}
           strokeWidth="1"
@@ -221,7 +221,7 @@ const LensVisualizer: React.FC<LensVisualizerProps> = ({ params, updateParam, da
         <line
           x1={x2}
           y1={centerY + halfDiameter}
-          x2={x2 + padding + 3}
+          x2={x2 + padding + 10}
           y2={centerY + halfDiameter}
           stroke={darkMode ? '#ffffff' : '#000000'}
           strokeWidth="1"
