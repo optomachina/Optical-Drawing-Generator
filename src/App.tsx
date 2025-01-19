@@ -13,7 +13,8 @@ function App() {
 
   const handleWheel = (e: React.WheelEvent<HTMLInputElement>, param: keyof typeof params) => {
     e.preventDefault();
-    const delta = e.deltaY > 0 ? -1 : 1;
+    // Normalize deltaY to ensure consistent increments
+    const delta = Math.sign(e.deltaY) * -1; // Will be 1 or -1 based on scroll direction
     const currentValue = params[param];
     if (typeof currentValue === 'number') {
       if (param === 'radius1' || param === 'radius2') {
@@ -27,16 +28,17 @@ function App() {
       } else if (param === 'diameter' || param === 'centerThickness') {
         updateParam(param, Math.max(0, Math.round(currentValue) + delta));
       } else {
-      updateParam(param, Math.max(0, currentValue + delta));
+        updateParam(param, Math.max(0, currentValue + delta));
       }
     }
   };
 
   const handleTypeWheel = (e: React.WheelEvent<HTMLSelectElement>, param: 'type1' | 'type2') => {
     e.preventDefault();
+    // Normalize deltaY for consistent type switching
+    const delta = Math.sign(e.deltaY);
     const types = ['CV', 'CX', 'PLANO'] as const;
     const currentIndex = types.indexOf(params[param]);
-    const delta = e.deltaY > 0 ? 1 : -1;
     const newIndex = (currentIndex + delta + types.length) % types.length;
     updateParam(param, types[newIndex]);
   };

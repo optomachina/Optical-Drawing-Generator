@@ -190,7 +190,7 @@ const LensVisualizer: React.FC<LensVisualizerProps> = ({ params, updateParam, da
               onChange={(e) => updateParam('centerThickness', parseFloat(e.target.value))}
               onWheel={(e) => {
                 e.preventDefault();
-                const delta = e.deltaY > 0 ? -1 : 1;
+                const delta = Math.sign(e.deltaY) * -1; // Will be 1 or -1 based on scroll direction
                 updateParam('centerThickness', Math.max(0, Math.round(params.centerThickness) + delta));
               }}
               style={{ 
@@ -250,7 +250,7 @@ const LensVisualizer: React.FC<LensVisualizerProps> = ({ params, updateParam, da
               onChange={(e) => updateParam('diameter', parseFloat(e.target.value))}
               onWheel={(e) => {
                 e.preventDefault();
-                const delta = e.deltaY > 0 ? -1 : 1;
+                const delta = Math.sign(e.deltaY) * -1; // Will be 1 or -1 based on scroll direction
                 updateParam('diameter', Math.max(0, Math.round(params.diameter) + delta));
               }}
               style={{ 
